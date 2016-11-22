@@ -1,13 +1,6 @@
 package com.horstmann.violet.workspace.editorpart.behavior;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.horstmann.violet.framework.util.KeyModifierUtil;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.IGridSticker;
 import com.horstmann.violet.product.diagram.abstracts.Id;
@@ -18,6 +11,13 @@ import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
 import com.horstmann.violet.workspace.editorpart.IEditorPartSelectionHandler;
 import com.horstmann.violet.workspace.sidebar.graphtools.GraphTool;
 import com.horstmann.violet.workspace.sidebar.graphtools.IGraphToolsBar;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddEdgeBehavior extends AbstractEditorPartBehavior
 {
@@ -89,6 +89,12 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
         if (this.isLinkingInProgress)
         {
             endAction(event);
+            if (!KeyModifierUtil.isCtrl(event))
+            {
+                selectionHandler.setSelectedTool(GraphTool.SELECTION_TOOL);
+                graphToolsBar.setSelectedTool(GraphTool.SELECTION_TOOL);
+                graphToolsBar.getAWTComponent().invalidate();
+            }
             return;
         }
     }
@@ -98,7 +104,8 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
         double zoom = this.editorPart.getZoomFactor();
         Point2D mousePoint = new Point2D.Double(event.getX() / zoom, event.getY() / zoom);
         Point2D snappedMousePoint = grid.snap(mousePoint);
-        if (!snappedMousePoint.equals(lastMousePoint)) {
+        if (!snappedMousePoint.equals(lastMousePoint))
+        {
             this.editorPart.getSwingComponent().invalidate();
             this.editorPart.getSwingComponent().repaint();
         }
@@ -175,7 +182,7 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
         this.isLinkBySeparatedClicks = false;
         this.transitionPoints.clear();
         this.newEdge = null;
-        
+
     }
 
     private void cancel()
@@ -188,7 +195,7 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
 
     /**
      * Adds an edge at a specific location
-     * 
+     *
      * @param newEdge
      * @param startPoint
      * @param endPoint
@@ -262,11 +269,11 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
     private Point2D firstMousePoint = null;
 
     private Point2D lastMousePoint = null;
-    
+
     private IEditorPart editorPart;
 
     private IGraph graph;
-    
+
     private IGridSticker grid;
 
     private IEditorPartSelectionHandler selectionHandler;
