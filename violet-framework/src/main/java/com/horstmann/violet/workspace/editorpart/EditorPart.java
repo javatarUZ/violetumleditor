@@ -21,6 +21,10 @@
 
 package com.horstmann.violet.workspace.editorpart;
 
+import com.horstmann.violet.product.diagram.abstracts.IGraph;
+import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
+import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.workspace.editorpart.behavior.IEditorPartBehavior;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -33,14 +37,9 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.List;
-
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import com.horstmann.violet.product.diagram.abstracts.IGraph;
-import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
-import com.horstmann.violet.product.diagram.abstracts.node.INode;
-import com.horstmann.violet.workspace.editorpart.behavior.IEditorPartBehavior;
 
 /**
  * Graph editor
@@ -50,7 +49,7 @@ public class EditorPart extends JPanel implements IEditorPart
 
     /**
      * Default constructor
-     * 
+     *
      * @param aGraph graph which will be drawn in this editor part
      */
     public EditorPart(IGraph aGraph)
@@ -121,6 +120,7 @@ public class EditorPart extends JPanel implements IEditorPart
      */
     public void removeSelected()
     {
+        if (!isUserSureToDelete()) return;
         this.behaviorManager.fireBeforeRemovingSelectedElements();
         try
         {
@@ -135,6 +135,20 @@ public class EditorPart extends JPanel implements IEditorPart
         {
             this.selectionHandler.clearSelection();
             this.behaviorManager.fireAfterRemovingSelectedElements();
+        }
+    }
+
+    private boolean isUserSureToDelete()
+    {
+        int reply = JOptionPane
+                .showConfirmDialog(null, "Do you really want to remove those objects?", "Are you sure?", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -160,7 +174,8 @@ public class EditorPart extends JPanel implements IEditorPart
         Rectangle2D bounds = graph.getClipBounds();
         int width = Math.max((int) (zoom * bounds.getMaxX()), (int) parentSize.getWidth());
         int height = Math.max((int) (zoom * bounds.getMaxY()), (int) parentSize.getHeight());
-        if (this.lastWidth != width || this.lastHeight != height) {
+        if (this.lastWidth != width || this.lastHeight != height)
+        {
             this.lastWidth = width;
             this.lastHeight = height;
         }
@@ -231,16 +246,14 @@ public class EditorPart extends JPanel implements IEditorPart
     {
         return this;
     }
-    
-    
+
     @Override
     public void paintImmediately(int x, int y, int w, int h)
     {
         getSwingComponent().invalidate();
         super.paintImmediately(x, y, w, h);
     }
-    
-    
+
     @Override
     protected void paintComponent(Graphics g)
     {
@@ -261,10 +274,7 @@ public class EditorPart extends JPanel implements IEditorPart
             behavior.onPaint(g2);
         }
     }
-    
-    
-    
-    
+
     @Override
     public IEditorPartSelectionHandler getSelectionHandler()
     {
@@ -277,10 +287,6 @@ public class EditorPart extends JPanel implements IEditorPart
         return this.behaviorManager;
     }
 
-    
-    
-
-    
     private IGraph graph;
 
     private IGrid grid;
@@ -288,9 +294,9 @@ public class EditorPart extends JPanel implements IEditorPart
     private double zoom;
 
     private IEditorPartSelectionHandler selectionHandler = new EditorPartSelectionHandler();
-    
+
     private int lastWidth = 0;
-    
+
     private int lastHeight = 0;
 
     /**
@@ -299,7 +305,5 @@ public class EditorPart extends JPanel implements IEditorPart
     private static final double GROW_SCALE_FACTOR = Math.sqrt(2);
 
     private IEditorPartBehaviorManager behaviorManager = new EditorPartBehaviorManager();
-    
-
 
 }
