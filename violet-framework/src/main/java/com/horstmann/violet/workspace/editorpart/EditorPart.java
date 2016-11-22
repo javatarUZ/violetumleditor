@@ -21,6 +21,8 @@
 
 package com.horstmann.violet.workspace.editorpart;
 
+import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
+import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
@@ -54,6 +56,7 @@ public class EditorPart extends JPanel implements IEditorPart
      */
     public EditorPart(IGraph aGraph)
     {
+        ResourceBundleInjector.getInjector().inject(this);
         this.graph = aGraph;
         this.zoom = 1;
         this.grid = new PlainGrid(this);
@@ -120,7 +123,7 @@ public class EditorPart extends JPanel implements IEditorPart
      */
     public void removeSelected()
     {
-        if (!isUserSureToDelete()) return;
+        if (!isUserSureToRemoveSelectedObjects()) return;
         this.behaviorManager.fireBeforeRemovingSelectedElements();
         try
         {
@@ -138,10 +141,9 @@ public class EditorPart extends JPanel implements IEditorPart
         }
     }
 
-    private boolean isUserSureToDelete()
+    private boolean isUserSureToRemoveSelectedObjects()
     {
-        int reply = JOptionPane
-                .showConfirmDialog(null, "Do you really want to remove those objects?", "Are you sure?", JOptionPane.YES_NO_OPTION);
+        int reply = JOptionPane.showConfirmDialog(null, deleteDialogMessage, deleteDialogTitle, JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION)
         {
             return true;
@@ -298,6 +300,12 @@ public class EditorPart extends JPanel implements IEditorPart
     private int lastWidth = 0;
 
     private int lastHeight = 0;
+
+    @ResourceBundleBean(key = "deleteDialog.title")
+    private String deleteDialogTitle;
+
+    @ResourceBundleBean(key = "deleteDialog.message")
+    private String deleteDialogMessage;
 
     /**
      * Scale factor used to grow drawing area
