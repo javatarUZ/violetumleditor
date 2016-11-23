@@ -194,7 +194,10 @@ public class EnumNode extends ColorableNode
         @Override
         public OneLineText toLineString(String text)
         {
-             return new PrefixDecorator( new LargeSizeDecorator(new OneLineText(text)), "<center>«enumeration»</center>");
+            OneLineText lineString;
+            lineString = new PrefixDecorator(new LargeSizeDecorator(new OneLineText(text)), "<center>«enumeration»</center>");
+            lineString = new CenterTextDecorator(lineString);
+            return lineString;
         }
     };
 
