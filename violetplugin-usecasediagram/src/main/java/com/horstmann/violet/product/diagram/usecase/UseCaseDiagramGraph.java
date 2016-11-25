@@ -21,19 +21,21 @@
 
 package com.horstmann.violet.product.diagram.usecase;
 
-import java.util.*;
-
 import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.common.edge.NoteEdge;
+import com.horstmann.violet.product.diagram.common.node.ActorNode;
 import com.horstmann.violet.product.diagram.common.node.NoteNode;
 import com.horstmann.violet.product.diagram.usecase.edge.ExtendEdge;
 import com.horstmann.violet.product.diagram.usecase.edge.GeneralizationEdge;
 import com.horstmann.violet.product.diagram.usecase.edge.IncludeEdge;
 import com.horstmann.violet.product.diagram.usecase.edge.InteractionEdge;
-import com.horstmann.violet.product.diagram.usecase.node.ActorNode;
 import com.horstmann.violet.product.diagram.usecase.node.UseCaseNode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A UML use case diagram.
@@ -51,8 +53,8 @@ public class UseCaseDiagramGraph extends AbstractGraph
     }
 
     private static final List<INode> NODE_PROTOTYPES = new ArrayList<INode>(Arrays.asList(
-            new ActorNode(),
             new UseCaseNode(),
+            new ActorNode(),
             new NoteNode()
     ));
 

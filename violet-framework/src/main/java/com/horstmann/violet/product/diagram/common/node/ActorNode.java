@@ -19,25 +19,23 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package com.horstmann.violet.product.diagram.usecase.node;
+package com.horstmann.violet.product.diagram.common.node;
+
+import com.horstmann.violet.framework.graphics.content.*;
+import com.horstmann.violet.framework.graphics.shape.ContentInsideCustomShape;
+import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
+import com.horstmann.violet.framework.injection.resources.ResourceBundleConstant;
+import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.property.text.LineText;
+import com.horstmann.violet.product.diagram.property.text.SingleLineText;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import com.horstmann.violet.framework.graphics.content.*;
-import com.horstmann.violet.framework.graphics.content.VerticalLayout;
-import com.horstmann.violet.framework.graphics.shape.ContentInsideCustomShape;
-import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
-import com.horstmann.violet.product.diagram.common.node.ColorableNode;
-import com.horstmann.violet.product.diagram.abstracts.node.INode;
-import com.horstmann.violet.product.diagram.property.text.LineText;
-import com.horstmann.violet.product.diagram.property.text.SingleLineText;
-import com.horstmann.violet.product.diagram.usecase.UseCaseDiagramConstant;
-
 /**
- * An actor node_old in a use case diagram.
+ * An actor node_old.
  */
 public class ActorNode extends ColorableNode
 {
@@ -89,8 +87,8 @@ public class ActorNode extends ColorableNode
     {
         super();
         name = new SingleLineText();
-        name.setAlignment(LineText.CENTER);
         name.setPadding(10,5,5,5);
+        name.setAlignment(LineText.CENTER);
         createContentStructure();
     }
 
@@ -105,10 +103,7 @@ public class ActorNode extends ColorableNode
     protected void beforeReconstruction()
     {
         super.beforeReconstruction();
-
         name.reconstruction();
-        name.setAlignment(LineText.CENTER);
-        name.setPadding(10,5,5,5);
     }
 
     @Override
@@ -132,8 +127,8 @@ public class ActorNode extends ColorableNode
             {
                 Rectangle2D shapeBounds = getShape().getBounds();
                 return new Point2D.Double(
-                    (shapeBounds.getWidth() - getContent().getWidth()) / 2,
-                    (shapeBounds.getHeight())
+                        (shapeBounds.getWidth() - getContent().getWidth()) / 2,
+                        (shapeBounds.getHeight())
                 );
             }
         };
@@ -160,18 +155,17 @@ public class ActorNode extends ColorableNode
     @Override
     public String getToolTip()
     {
-        return UseCaseDiagramConstant.USE_CASE_DIAGRAM_RESOURCE.getString("tooltip.actor_node");
+        return ResourceBundleConstant.NODE_AND_EDGE_RESOURCE.getString("actor_node.tooltip");
     }
 
     /**
      * Sets the name property value.
-     * 
+     *
      * @param newValue the new actor name
      */
     public void setName(SingleLineText newValue)
     {
         name.setText(newValue.toEdit());
-//        getContent().refresh();
     }
 
     /**

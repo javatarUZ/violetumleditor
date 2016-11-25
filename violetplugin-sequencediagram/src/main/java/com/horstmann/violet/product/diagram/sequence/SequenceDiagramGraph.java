@@ -21,20 +21,23 @@
 
 package com.horstmann.violet.product.diagram.sequence;
 
-import java.awt.geom.Point2D;
-import java.util.*;
-
 import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.common.edge.NoteEdge;
+import com.horstmann.violet.product.diagram.common.node.ActorNode;
 import com.horstmann.violet.product.diagram.common.node.NoteNode;
 import com.horstmann.violet.product.diagram.sequence.edge.AsynchronousCallEdge;
-import com.horstmann.violet.product.diagram.sequence.edge.SynchronousCallEdge;
 import com.horstmann.violet.product.diagram.sequence.edge.ReturnEdge;
+import com.horstmann.violet.product.diagram.sequence.edge.SynchronousCallEdge;
 import com.horstmann.violet.product.diagram.sequence.node.ActivationBarNode;
 import com.horstmann.violet.product.diagram.sequence.node.CombinedFragmentNode;
 import com.horstmann.violet.product.diagram.sequence.node.LifelineNode;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A UML sequence diagram.
@@ -63,6 +66,7 @@ public class SequenceDiagramGraph extends AbstractGraph
             new LifelineNode(),
             new ActivationBarNode(),
             new CombinedFragmentNode(),
+            new ActorNode(),
             new NoteNode()
     ));
 

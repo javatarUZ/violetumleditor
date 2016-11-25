@@ -21,20 +21,21 @@
 
 package com.horstmann.violet.product.diagram.usecase.node;
 
-import java.awt.Color;
-import java.awt.geom.Point2D;
-
 import com.horstmann.violet.framework.graphics.content.ContentBackground;
 import com.horstmann.violet.framework.graphics.content.ContentBorder;
 import com.horstmann.violet.framework.graphics.content.ContentInsideShape;
 import com.horstmann.violet.framework.graphics.content.TextContent;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideEllipse;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
-import com.horstmann.violet.product.diagram.common.node.ColorableNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.common.node.ActorNode;
+import com.horstmann.violet.product.diagram.common.node.ColorableNode;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
 import com.horstmann.violet.product.diagram.usecase.UseCaseDiagramConstant;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 /**
  * A use case node_old in a use case diagram.
@@ -107,14 +108,18 @@ public class UseCaseNode extends ColorableNode
     @Override
     public Point2D getConnectionPoint(IEdge edge)
     {
-        // if use case node_old is atatched to an actor node_old, we force connection point to cardianl points
-        if (edge.getStartNode().getClass().isAssignableFrom(ActorNode.class) || edge.getEndNode().getClass().isAssignableFrom(ActorNode.class))
+        // if use case node_old is attached to an actor node_old, we force connection point to cardinal points
+        if (isStartingOrEndingWithActorNode(edge))
         {
-
         }
         return super.getConnectionPoint(edge);
     }
 
+    private boolean isStartingOrEndingWithActorNode(IEdge edge){
+        boolean isStarting = edge.getStartNode().getClass().isAssignableFrom(ActorNode.class);
+        boolean isEnding = edge.getEndNode().getClass().isAssignableFrom(ActorNode.class);
+        return isStarting || isEnding;
+    }
 
     /**
      * Sets the name property value.
