@@ -146,7 +146,7 @@ public class EnumNode extends ColorableNode
      *
      * @return the attributes of this class
      */
-    public MultiLineText getAttributes()
+    public LineText getAttributes()
     {
         return attributes;
     }
