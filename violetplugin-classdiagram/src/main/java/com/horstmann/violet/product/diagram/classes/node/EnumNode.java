@@ -8,6 +8,7 @@ import com.horstmann.violet.product.diagram.property.text.decorator.LargeSizeDec
 import com.horstmann.violet.product.diagram.property.text.decorator.OneLineText;
 import com.horstmann.violet.product.diagram.property.text.decorator.PrefixDecorator;
 import com.horstmann.violet.product.diagram.common.node.ColorableNode;
+import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
@@ -18,7 +19,7 @@ import java.awt.*;
 /**
  * A class node in a class diagram.
  */
-public class EnumNode extends ColorableNode
+public class EnumNode extends ColorableNode implements INamedNode
 {
 	/**
      * Construct a class node with a default size

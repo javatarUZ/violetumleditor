@@ -33,6 +33,7 @@ import com.horstmann.violet.product.diagram.abstracts.IColorable;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.AbstractNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.workspace.sidebar.colortools.ColorToolsBarPanel;
 
 /**
@@ -50,8 +51,6 @@ public abstract class ColorableNode extends AbstractNode implements IColorable
         super(node);
     }
 
-    @Override
-//  protected abstract void createContentStructure();
     protected void createContentStructure()
     {
         setBorder(new ContentBorder(new ContentInsideRoundRectangle(new EmptyContent()), getBorderColor()));

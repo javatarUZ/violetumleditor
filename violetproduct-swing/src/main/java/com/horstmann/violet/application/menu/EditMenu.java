@@ -113,7 +113,7 @@ public class EditMenu extends JMenu
                     if (found.size() != 1) {
                         return;
                     }
-                    found.get(0).editSelected();
+                    found.get(0).createSelectedItemEditMenu();
                 }
             }
         });

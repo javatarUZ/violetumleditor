@@ -54,6 +54,10 @@ public abstract class LineText implements Serializable, Cloneable, EditableText
         getLabel().setText(lineText.getLabel().getText());
         converter = lineText.converter;
     }
+    
+    public String getText(){
+    	return getLabel().getText();
+    }
 
     public final void reconstruction()
     {
