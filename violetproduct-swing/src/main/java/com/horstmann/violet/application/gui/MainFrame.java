@@ -21,16 +21,21 @@
 
 package com.horstmann.violet.application.gui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.beans.BeanInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -60,18 +65,100 @@ import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.IWorkspaceListener;
 import com.horstmann.violet.workspace.Workspace;
 import com.horstmann.violet.workspace.WorkspacePanel;
+import com.horstmann.violet.workspace.IWorkspace.KeyListenerDelegate;
 
 /**
  * This desktop frame contains panes that show graphs.
- * 
+ *
  * @author Alexandre de Pellegrin
  */
 @ResourceBundleBean(resourceReference = AboutDialog.class)
 public class MainFrame extends JFrame
 {
+
+    private static class MainFrameKeyListener extends KeyAdapter
+    {
+        private KeyListenerDelegate workspaceKeyListenerDelegate;
+
+        public MainFrameKeyListener(KeyListenerDelegate keyListenerDelegate)
+        {
+            setDelegate(keyListenerDelegate);
+        }
+
+        @Override
+        public void keyPressed(KeyEvent event)
+        {
+            workspaceKeyListenerDelegate.handleKeyEvent(event);
+        }
+
+        public void setDelegate(KeyListenerDelegate keyListenerDelegate)
+        {
+            workspaceKeyListenerDelegate = requireNonNull(keyListenerDelegate);
+        }
+    }
+
+    private static final KeyListenerDelegate BLANK_KEY_LISTENER_DELEGATE = new KeyListenerDelegate()
+    {
+
+        @Override
+        public void handleKeyEvent(KeyEvent keyEvent)
+        {
+            // Do nothing by default
+        }
+    };
+
+    private static final MainFrameKeyListener MAIN_FRAME_KEY_LISTENER = new MainFrameKeyListener(
+            BLANK_KEY_LISTENER_DELEGATE);
+
+    /**
+     * Blank key listener delegate, when workspace doesn't provide one, doesn't
+     * do anything on key event
+     */
+    private static final Supplier<KeyListenerDelegate> BLANK_KEY_LISTENER_DELEGATE_SUPPLIER = new Supplier<KeyListenerDelegate>()
+    {
+        @Override
+        public KeyListenerDelegate get()
+        {
+            return BLANK_KEY_LISTENER_DELEGATE;
+        }
+    };
+
+    /**
+     * Main panel
+     */
+    private JPanel mainPanel;
+
+    /**
+     * Menu factory instance
+     */
+    private MenuFactory menuFactory;
+
+    /**
+     * GUI Theme manager
+     */
+    @InjectedBean
+    private ThemeManager themeManager;
+
+    /**
+     * Needed to display dialog boxes
+     */
+    @InjectedBean
+    private DialogFactory dialogFactory;
+
+    /**
+     * Needed to open files
+     */
+    @InjectedBean
+    private IFileChooserService fileChooserService;
+
+    @ResourceBundleBean(key = "app.name")
+    private String applicationName;
+
+    @ResourceBundleBean(key = "app.icon")
+    private Image applicationIcon;
+
     /**
      * Constructs a blank frame with a desktop pane but no graph windows.
-     * 
      */
     public MainFrame()
     {
@@ -84,6 +171,7 @@ public class MainFrame extends JFrame
         createMenuBar();
         getContentPane().add(this.getMainPanel());
         startAutoSave();
+        addKeyListener(MAIN_FRAME_KEY_LISTENER);
     }
 
     /**
@@ -123,32 +211,34 @@ public class MainFrame extends JFrame
         menuBar.add(menuFactory.getHelpMenu(this));
         setJMenuBar(menuBar);
     }
-    
+
     private void startAutoSave()
     {
-    	new AutoSave(this);
+        new AutoSave(this);
     }
-
 
     /**
      * Add a listener to perform action when something happens on this diagram
-     * 
+     *
      * @param workspace
      */
     private void listenToWorkspaceEvents(final IWorkspace workspace)
     {
         workspace.addListener(new IWorkspaceListener()
         {
+            @Override
             public void titleChanged(String newTitle)
             {
                 setTitle(newTitle);
             }
 
+            @Override
             public void graphCouldBeSaved()
             {
                 // nothing to do here
             }
 
+            @Override
             public void mustOpenfile(IFile file)
             {
                 try
@@ -167,8 +257,8 @@ public class MainFrame extends JFrame
 
     /**
      * Removes a diagram panel from this editor frame
-     * 
-     * @param diagramPanel
+     *
+     * @param workspaceToRemove
      */
     public void removeWorkspace(IWorkspace workspaceToRemove)
     {
@@ -177,20 +267,25 @@ public class MainFrame extends JFrame
             return;
         }
         int pos = this.workspaceList.indexOf(workspaceToRemove);
-        if (pos < 0) {
+        if (pos < 0)
+        {
             return;
         }
         boolean isWorkspaceDisplayed = workspaceToRemove.equals(getActiveWorkspace());
-        if (!isWorkspaceDisplayed) {
+        if (!isWorkspaceDisplayed)
+        {
             // TODO : update window menu here
             return;
         }
         this.workspaceList.remove(workspaceToRemove);
-        if (pos >= this.workspaceList.size()) {
+        if (pos >= this.workspaceList.size())
+        {
             pos = this.workspaceList.size() - 1;
         }
-        if (pos < 0) {
-            Component currentWorkspaceComponent = ((BorderLayout) getMainPanel().getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        if (pos < 0)
+        {
+            Component currentWorkspaceComponent = ((BorderLayout) getMainPanel().getLayout())
+                    .getLayoutComponent(BorderLayout.CENTER);
             getMainPanel().remove(currentWorkspaceComponent);
             getMainPanel().add(new JPanel(), BorderLayout.CENTER);
             setTitle(this.applicationName);
@@ -202,21 +297,22 @@ public class MainFrame extends JFrame
         IWorkspace workspaceToDisplay = this.workspaceList.get(pos);
         setActiveWorkspace(workspaceToDisplay);
     }
-    
-    public void addWorkspace(IWorkspace newWorkspace) {
+
+    public void addWorkspace(IWorkspace newWorkspace)
+    {
         this.workspaceList.add(newWorkspace);
         setActiveWorkspace(newWorkspace);
     }
-    
-    
+
     /**
      * Looks for an opened diagram from its file path and focus it
-     * 
-     * @param diagramFilePath diagram file path
+     *
+     * @param aGraphFile diagram file path
      */
     public void setActiveWorkspace(IFile aGraphFile)
     {
-        if (aGraphFile == null) return;
+        if (aGraphFile == null)
+            return;
         for (IWorkspace aWorkspace : this.workspaceList)
         {
             IFile toCompare = aWorkspace.getGraphFile();
@@ -228,22 +324,31 @@ public class MainFrame extends JFrame
             }
         }
     }
-    
-    public void setActiveWorkspace(IWorkspace activeWorkspace) {
-        if (!this.workspaceList.contains(activeWorkspace)) {
+
+    public void setActiveWorkspace(IWorkspace activeWorkspace)
+    {
+        if (!this.workspaceList.contains(activeWorkspace))
+        {
             return;
         }
         WorkspacePanel activeWorkspaceComponent = activeWorkspace.getAWTComponent();
-        Component currentWorkspaceComponent = ((BorderLayout) getMainPanel().getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        Component currentWorkspaceComponent = ((BorderLayout) getMainPanel().getLayout())
+                .getLayoutComponent(BorderLayout.CENTER);
         getMainPanel().remove(currentWorkspaceComponent);
         getMainPanel().add(activeWorkspaceComponent, BorderLayout.CENTER);
         listenToWorkspaceEvents(activeWorkspace);
+        attachWorkspaceKeyListener(activeWorkspace);
         menuFactory.getDocumentMenu(this).updateMenuItem();
         setTitle(activeWorkspace.getTitle());
         getMainPanel().revalidate();
         getMainPanel().repaint();
     }
-    
+
+    private void attachWorkspaceKeyListener(IWorkspace activeWorkspace)
+    {
+        MAIN_FRAME_KEY_LISTENER
+                .setDelegate(activeWorkspace.getKeyListenerDelegate().orElseGet(BLANK_KEY_LISTENER_DELEGATE_SUPPLIER));
+    }
 
     /**
      * @return true if at least a diagram is displayed
@@ -259,25 +364,30 @@ public class MainFrame extends JFrame
     }
 
     /**
-     * @return selected diagram file path (or null if not one is selected; that should never happen)
+     * @return selected diagram file path (or null if not one is selected; that
+     * should never happen)
      */
     public IWorkspace getActiveWorkspace()
     {
         Component activeWorkspace = ((BorderLayout) getMainPanel().getLayout()).getLayoutComponent(BorderLayout.CENTER);
-        if (activeWorkspace == null) {
+        if (activeWorkspace == null)
+        {
             return null;
         }
-        for (IWorkspace aWorkspace : this.workspaceList) {
-            if (activeWorkspace.equals(aWorkspace.getAWTComponent())) {
+        for (IWorkspace aWorkspace : this.workspaceList)
+        {
+            if (activeWorkspace.equals(aWorkspace.getAWTComponent()))
+            {
                 return aWorkspace;
             }
         }
         return null;
     }
 
-
-    private JPanel getMainPanel() {
-        if (this.mainPanel == null) {
+    private JPanel getMainPanel()
+    {
+        if (this.mainPanel == null)
+        {
             this.mainPanel = new JPanel(new BorderLayout());
             this.mainPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
             this.mainPanel.add(new JPanel(), BorderLayout.CENTER);
@@ -290,7 +400,7 @@ public class MainFrame extends JFrame
         }
         return this.mainPanel;
     }
-    
+
     /**
      * @return the menu factory instance
      */
@@ -302,41 +412,6 @@ public class MainFrame extends JFrame
         }
         return this.menuFactory;
     }
-    
-    
-    /**
-     * Main panel
-     */
-    private JPanel mainPanel;
-
-    /**
-     * Menu factory instance
-     */
-    private MenuFactory menuFactory;
-
-    /**
-     * GUI Theme manager
-     */
-    @InjectedBean
-    private ThemeManager themeManager;
-
-    /**
-     * Needed to display dialog boxes
-     */
-    @InjectedBean
-    private DialogFactory dialogFactory;
-
-    /**
-     * Needed to open files
-     */
-    @InjectedBean
-    private IFileChooserService fileChooserService;
-    
-    @ResourceBundleBean(key="app.name")
-    private String applicationName;
-    
-    @ResourceBundleBean(key="app.icon")
-    private Image applicationIcon;
 
     /**
      * All disgram workspaces
@@ -345,18 +420,14 @@ public class MainFrame extends JFrame
 
     // workaround for bug #4646747 in J2SE SDK 1.4.0
     private static java.util.HashMap<Class<?>, BeanInfo> beanInfos;
+
     static
     {
         beanInfos = new java.util.HashMap<Class<?>, BeanInfo>();
-        Class<?>[] cls = new Class<?>[]
-        {
-                Point2D.Double.class,
-                BentStyleChoiceList.class,
-                ArrowheadChoiceList.class,
-                LineStyleChoiceList.class,
-                IGraph.class,
-                AbstractNode.class,
-        };
+        Class<?>[] cls = new Class<?>[] {
+                Point2D.Double.class, BentStyleChoiceList.class, ArrowheadChoiceList.class,
+                LineStyleChoiceList.class, IGraph.class, AbstractNode.class,
+                };
         for (int i = 0; i < cls.length; i++)
         {
             try
