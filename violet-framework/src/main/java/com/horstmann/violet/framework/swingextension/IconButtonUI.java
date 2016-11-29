@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.framework.swingextension;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -38,7 +39,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.BevelBorder;
 import javax.swing.plaf.IconUIResource;
 import javax.swing.plaf.basic.BasicButtonUI;
 
@@ -57,10 +58,11 @@ public class IconButtonUI extends BasicButtonUI
     protected void installDefaults(AbstractButton b)
     {
         super.installDefaults(b);
-        b.setOpaque(false);
+        b.setPreferredSize(new Dimension(30,41)); //26x26 is default
+        b.setOpaque(true);
         b.setBorderPainted(false);
         b.setRolloverEnabled(true);
-        b.setBorder(new EmptyBorder(0, 0, 0, 0));
+        b.setBorder(new BevelBorder(0));
         prepareIcons(b);
     }
     
@@ -91,10 +93,13 @@ public class IconButtonUI extends BasicButtonUI
         }
         else if (model.isRollover())
         {
+            b.setBorderPainted(true);
+            b.setBorder(new BevelBorder(BevelBorder.LOWERED));
             b.setIcon(brighterIcon);
         }
         else
         {
+            b.setBorderPainted(false);
             b.setIcon(baseIcon);
         }
         super.paint(g, c);
