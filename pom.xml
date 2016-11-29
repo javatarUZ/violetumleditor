@@ -22,7 +22,7 @@
 
 		<!-- Commented out because they are causing problems during project build-->
 		<!--<module>violetproduct-jnlp</module-->
-		<!--<module>violetproduct-exe</module>-->
+		<module>violetproduct-exe</module>
 		<!--<module>violetproduct-rpm</module-->
 		<!--<module>violetproduct-web</module>-->
 	</modules>
