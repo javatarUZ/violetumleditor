@@ -17,11 +17,9 @@ import com.horstmann.violet.framework.injection.resources.annotation.ResourceBun
 import com.horstmann.violet.framework.userpreferences.UserPreferencesService;
 import com.horstmann.violet.workspace.IWorkspace;
 
-public class ApplicationStopper
-{
+public class ApplicationStopper {
 
-    public ApplicationStopper()
-    {
+    public ApplicationStopper() {
         BeanInjector.getInjector().inject(this);
         ResourceBundleInjector.getInjector().inject(this);
     }
@@ -29,78 +27,62 @@ public class ApplicationStopper
     /**
      * Exits the program if no graphs have been modified or if the user agrees to abandon modified graphs or save its.
      */
-    public void exitProgram(MainFrame mainFrame)
-    {
+    public void exitProgram(MainFrame mainFrame) {
         boolean ok = isItReadyToExit(mainFrame);
-        if (ok)
-        {
-        	for (IWorkspace workspace: mainFrame.getWorkspaceList())
-        	{
-        		workspace.getGraphFile().removeBackup();
-        	}
+        if (ok) {
+            for (IWorkspace workspace : mainFrame.getWorkspaceList()) {
+                workspace.getGraphFile().removeBackup();
+            }
             System.exit(0);
         }
     }
 
     /**
      * Asks user to save changes before exit.
-     * 
+     *
      * @return true is all is saved either false
      */
-    private boolean isItReadyToExit(MainFrame mainFrame)
-    {
+    private boolean isItReadyToExit(MainFrame mainFrame) {
         List<IWorkspace> dirtyWorkspaceList = new ArrayList<IWorkspace>();
         List<IWorkspace> workspaceList = mainFrame.getWorkspaceList();
-        for (IWorkspace workspace: workspaceList)
-        {
+        for (IWorkspace workspace : workspaceList) {
             IGraphFile graphFile = workspace.getGraphFile();
-        	if (graphFile.isSaveRequired())
-            {
+            if (graphFile.isSaveRequired()) {
                 dirtyWorkspaceList.add(workspace);
             }
         }
         int unsavedCount = dirtyWorkspaceList.size();
         IWorkspace activeWorkspace = mainFrame.getActiveWorkspace();
-        if (unsavedCount > 0)
-        {
+        if (unsavedCount > 0) {
             // ask user if it is ok to close
-            String message = MessageFormat.format(this.dialogExitMessage, new Object[]
-            {
-                new Integer(unsavedCount)
-            });
-            JOptionPane optionPane = new JOptionPane(message, JOptionPane.CLOSED_OPTION, JOptionPane.YES_NO_CANCEL_OPTION,
+            String message = MessageFormat.format(this.dialogExitMessage, new Object[] { new Integer(unsavedCount) });
+            JOptionPane optionPane =
+                new JOptionPane(message, JOptionPane.CLOSED_OPTION, JOptionPane.YES_NO_CANCEL_OPTION,
                     this.dialogExitIcon);
             dialogFactory.showDialog(optionPane, this.dialogExitTitle, true);
 
             int result = JOptionPane.YES_OPTION;
-            if (!JOptionPane.UNINITIALIZED_VALUE.equals(optionPane.getValue()))
-            {
+            if (!JOptionPane.UNINITIALIZED_VALUE.equals(optionPane.getValue())) {
                 result = ((Integer) optionPane.getValue()).intValue();
             }
 
-            if (result == JOptionPane.CANCEL_OPTION)
-            {
+            if (result == JOptionPane.CANCEL_OPTION) {
                 return false;
             }
-            if (result == JOptionPane.YES_OPTION)
-            {
-                for (IWorkspace aDirtyWorkspace : dirtyWorkspaceList)
-                {
+            if (result == JOptionPane.YES_OPTION) {
+                for (IWorkspace aDirtyWorkspace : dirtyWorkspaceList) {
                     aDirtyWorkspace.getGraphFile().save();
                 }
                 this.userPreferencesService.setActiveDiagramFile(activeWorkspace.getGraphFile());
                 return true;
             }
-            if (result == JOptionPane.NO_OPTION)
-            {
+            if (result == JOptionPane.NO_OPTION) {
                 this.userPreferencesService.setActiveDiagramFile(activeWorkspace.getGraphFile());
                 return true;
             }
         }
-        if (unsavedCount == 0)
-        {
-            if (activeWorkspace != null)
-            {
+        if (unsavedCount == 0) {
+            if (activeWorkspace != null) {
                 this.userPreferencesService.setActiveDiagramFile(activeWorkspace.getGraphFile());
             }
             return true;

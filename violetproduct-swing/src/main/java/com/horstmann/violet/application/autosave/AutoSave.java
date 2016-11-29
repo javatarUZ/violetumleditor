@@ -29,100 +29,85 @@ import com.horstmann.violet.workspace.Workspace;
 
 /**
  * Violet's auto save
- * 
+ *
  * @author Pawel Majka
- * 
  */
 public class AutoSave implements ActionListener {
 
-	private MainFrame mainFrame;
-	private Timer saveTimer;
+    private MainFrame mainFrame;
+    private Timer saveTimer;
 
     private final int second = 1000;
     private final int saveInterval = 60 * second;
     private final String autoSaveDirectory = System.getProperty("user.home") + File.separator + "VioletUML";
 
-	public AutoSave(MainFrame mainFrame)
-	{
-		BeanInjector.getInjector().inject(this);
+    public AutoSave(MainFrame mainFrame) {
+        BeanInjector.getInjector().inject(this);
 
-		if (mainFrame != null)
-		{
-			this.mainFrame = mainFrame;
-			if (createVioletDirectory())
-			{
-				openAutoSaveProjects();
-				initializeTimer();
-			}
-		}
-	}
+        if (mainFrame != null) {
+            this.mainFrame = mainFrame;
+            if (createVioletDirectory()) {
+                openAutoSaveProjects();
+                initializeTimer();
+            }
+        }
+    }
 
-	private boolean createVioletDirectory()
-	{
-		File directory = new File(autoSaveDirectory);
-		if (directory.isDirectory())
-		{
-			return true;
-		}
-		else
-		{
-			return directory.mkdir();
-		}
-	}
+    private boolean createVioletDirectory() {
+        File directory = new File(autoSaveDirectory);
+        if (directory.isDirectory()) {
+            return true;
+        } else {
+            return directory.mkdir();
+        }
+    }
 
-	private void openAutoSaveProjects()
-	{
-		File directory = new File(autoSaveDirectory);
-		if (directory.isDirectory())
-		{
-			File[] files = directory.listFiles();
-			if (files.length == 0)
-				return;
+    private void openAutoSaveProjects() {
+        File directory = new File(autoSaveDirectory);
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files.length == 0)
+                return;
 
-			for (File file: files)
-			{
-				try {
-					IFile autoSaveFile = new LocalFile(file);
-					IFileReader readFile = new JFileReader(file);
-					InputStream in = readFile.getInputStream();
-					if (in != null)
-					{
-						IGraph graph = this.filePersistenceService.read(in);
-						IGraphFile graphFile = new GraphFile(autoSaveFile);
-					
-						IWorkspace workspace = new Workspace(graphFile);
-						mainFrame.addWorkspace(workspace);
-					
-						file.delete();
-					}
-				} catch (IOException e) {
-					file.delete();
-				} catch (Exception e) {
-					file.delete();
-				}
-			}
-		}
-	}
+            for (File file : files) {
+                try {
+                    IFile autoSaveFile = new LocalFile(file);
+                    IFileReader readFile = new JFileReader(file);
+                    InputStream in = readFile.getInputStream();
+                    if (in != null) {
+                        IGraph graph = this.filePersistenceService.read(in);
+                        IGraphFile graphFile = new GraphFile(autoSaveFile);
 
-	private void initializeTimer()
-	{
-		saveTimer = new Timer(saveInterval, (ActionListener) this);
-		saveTimer.setInitialDelay(0);
-		saveTimer.start();
-	}
+                        IWorkspace workspace = new Workspace(graphFile);
+                        mainFrame.addWorkspace(workspace);
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    for (IWorkspace workspace: mainFrame.getWorkspaceList())
-	    {
-	    	IGraphFile graphFile = workspace.getGraphFile();
-	    	if (graphFile.isSaveRequired())
-	    	{
-	    		graphFile.autoSave();
-	    	}
-	    }
-	}
+                        file.delete();
+                    }
+                } catch (IOException e) {
+                    file.delete();
+                } catch (Exception e) {
+                    file.delete();
+                }
+            }
+        }
+    }
 
-	@InjectedBean
-	private IFilePersistenceService filePersistenceService;
+    private void initializeTimer() {
+        saveTimer = new Timer(saveInterval, (ActionListener) this);
+        saveTimer.setInitialDelay(0);
+        saveTimer.start();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        for (IWorkspace workspace : mainFrame.getWorkspaceList()) {
+            IGraphFile graphFile = workspace.getGraphFile();
+            if (graphFile.isSaveRequired()) {
+                graphFile.autoSave();
+            }
+        }
+    }
+
+    @InjectedBean
+    private IFilePersistenceService filePersistenceService;
 }
