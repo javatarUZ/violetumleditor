@@ -80,8 +80,10 @@ public abstract class BeanInfo extends SimpleBeanInfo
 
         }
         catch (IntrospectionException e)
-        {
-            LOGGER.log(Level.WARNING, new MessageFormat(CREATE_PROPERTY_DESCRIPTOR_FAIL_MESSAGE_FORMAT).format(new Object[]{valueName,resourceKey,e.getMessage()}));
+        {   
+            MessageFormat messageFormatter = new MessageFormat(CREATE_PROPERTY_DESCRIPTOR_FAIL_MESSAGE_FORMAT);
+            String message = messageFormatter.format(new Object[]{valueName,resourceKey,e.getMessage()});
+            LOGGER.log(Level.WARNING, message);
         }
         return propertyDescriptor;
     }
