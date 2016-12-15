@@ -3,13 +3,13 @@ package com.horstmann.violet.product.diagram.classes.node;
 import com.horstmann.violet.framework.graphics.Separator;
 import com.horstmann.violet.framework.graphics.content.*;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
-import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
-import com.horstmann.violet.product.diagram.property.text.decorator.*;
-import com.horstmann.violet.product.diagram.common.node.ColorableNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
+import com.horstmann.violet.product.diagram.common.node.ColorableNode;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
+import com.horstmann.violet.product.diagram.property.text.decorator.*;
 
 import java.awt.*;
 
@@ -25,16 +25,20 @@ public class EnumNode extends ColorableNode
     {
         super();
         name = new SingleLineText(NAME_CONVERTER);
-        attributes = new MultiLineText();
         methods = new MultiLineText(PROPERTY_CONVERTER);
         createContentStructure();
     }
 
-    protected EnumNode(EnumNode node) throws CloneNotSupportedException
+    /**
+     * Clones enum node
+     *
+     * @param node Enum node to clone
+     * @throws CloneNotSupportedException when node is null
+     */
+    private EnumNode(EnumNode node) throws CloneNotSupportedException
     {
         super(node);
         name = node.name.clone();
-        attributes = node.attributes.clone();
         methods = node.methods.clone();
         createContentStructure();
     }
@@ -44,21 +48,8 @@ public class EnumNode extends ColorableNode
     {
         super.beforeReconstruction();
 
-        if(null == name)
-        {
-            name = new SingleLineText();
-        }
-        if(null == attributes)
-        {
-            attributes = new MultiLineText();
-        }
-        if(null == methods)
-        {
-            methods = new MultiLineText();
-        }
         name.reconstruction(NAME_CONVERTER);
         methods.reconstruction(PROPERTY_CONVERTER);
-        attributes.reconstruction();
     }
 
     @Override
@@ -75,14 +66,13 @@ public class EnumNode extends ColorableNode
         TextContent nameContent = new TextContent(name);
         nameContent.setMinHeight(MIN_NAME_HEIGHT);
         nameContent.setMinWidth(MIN_WIDTH);
-        TextContent attributesContent = new TextContent(attributes);
+
         TextContent methodsContent = new TextContent(methods);
 
         VerticalLayout verticalGroupContent = new VerticalLayout();
-        verticalGroupContent.add(nameContent);
-        verticalGroupContent.add(attributesContent);
-        verticalGroupContent.add(methodsContent);
         separator = new Separator.LineSeparator(getBorderColor());
+        verticalGroupContent.add(nameContent);
+        verticalGroupContent.add(methodsContent);
         verticalGroupContent.setSeparator(separator);
 
         ContentInsideShape contentInsideShape = new ContentInsideRectangle(verticalGroupContent);
@@ -108,7 +98,6 @@ public class EnumNode extends ColorableNode
     public void setTextColor(Color textColor)
     {
         name.setTextColor(textColor);
-        attributes.setTextColor(textColor);
         methods.setTextColor(textColor);
         super.setTextColor(textColor);
     }
@@ -120,9 +109,9 @@ public class EnumNode extends ColorableNode
     }
 
     /**
-     * Sets the name property value.
+     * Sets the enum name.
      * 
-     * @param newValue the class name
+     * @param newValue the enum name
      */
     public void setName(LineText newValue)
     {
@@ -130,33 +119,13 @@ public class EnumNode extends ColorableNode
     }
 
     /**
-     * Gets the name property value.
+     * Gets the enum name.
      * 
-     * @return the class name
+     * @return the enum name
      */
     public LineText getName()
     {
         return name;
-    }
-
-    /**
-     * Sets the attributes property value.
-     *
-     * @param newValue the attributes of this class
-     */
-    public void setAttributes(LineText newValue)
-    {
-        attributes.setText(newValue);
-    }
-
-    /**
-     * Gets the attributes property value.
-     *
-     * @return the attributes of this class
-     */
-    public MultiLineText getAttributes()
-    {
-        return attributes;
     }
 
     /**
@@ -180,7 +149,6 @@ public class EnumNode extends ColorableNode
     }
 
     private SingleLineText name;
-    private MultiLineText attributes;
     private MultiLineText methods;
 
     private transient Separator separator;
