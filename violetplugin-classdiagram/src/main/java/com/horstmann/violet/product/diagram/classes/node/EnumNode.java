@@ -12,62 +12,51 @@ import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
+import java.awt.Color;
 
-import com.horstmann.violet.product.diagram.property.text.decorator.RemoveSentenceDecorator;
-import com.horstmann.violet.product.diagram.property.text.decorator.ReplaceSentenceDecorator;
-import com.horstmann.violet.product.diagram.property.text.decorator.UnderlineDecorator;
-import java.awt.*;
-
-/**
- * Enumeration diagram class
- */
 public class EnumNode extends ColorableNode
 {
 
+    private SingleLineText name;
+    private MultiLineText attributes;
+
+    private transient Separator separator;
+
+    private static final int MIN_NAME_HEIGHT = 45;
+    private static final int MIN_WIDTH = 100;
+
+	  /**
+     * Node with a default size
+     */
     public EnumNode()
     {
         super();
         name = new SingleLineText(NAME_CONVERTER);
-        attributes = new MultiLineText(PROPERTY_CONVERTER);
-        methods = new MultiLineText(PROPERTY_CONVERTER);
+        attributes = new MultiLineText();
         createContentStructure();
     }
 
     /**
-     * Constructor responsible for cloning enumeration diagram
-     * @param node
-     * @throws CloneNotSupportedException
+     * Copy node
      */
     protected EnumNode(final EnumNode node) throws CloneNotSupportedException
     {
         super(node);
-        name = node.name.clone();
-        attributes = node.attributes.clone();
-        methods = node.methods.clone();
-        createContentStructure();
+        if( node != null ) {
+            name = node.name.clone();
+            attributes = node.attributes.clone();
+            createContentStructure();
+        }
     }
 
     @Override
     protected void beforeReconstruction()
     {
         super.beforeReconstruction();
-
-        if(null == name)
-        {
-            name = new SingleLineText();
-        }
-        if(null == attributes)
-        {
-            attributes = new MultiLineText();
-        }
-        if(null == methods)
-        {
-            methods = new MultiLineText();
-        }
+        name = new SingleLineText();
+        attributes = new MultiLineText();
         name.reconstruction(NAME_CONVERTER);
-        attributes.reconstruction(PROPERTY_CONVERTER);
-        methods.reconstruction(PROPERTY_CONVERTER);
-        name.setAlignment(LineText.CENTER);
+        attributes.reconstruction();
     }
 
     @Override
@@ -81,44 +70,52 @@ public class EnumNode extends ColorableNode
     {
         name.setText(name.toEdit());
 
+        TextContent nameContent = getTextContent();
+        VerticalLayout verticalGroupContent = getVerticalLayout(nameContent);
+
+        ContentInsideShape contentInsideShape = new ContentInsideRectangle(verticalGroupContent);
+        setBorder(new ContentBorder(contentInsideShape, getBorderColor()));
+        setBackground(new ContentBackground(getBorder(), getBackgroundColor()));
+        setContent(getBackground());
+        setTextColor(super.getTextColor());
+    }
+
+    private TextContent getTextContent() {
         TextContent nameContent = new TextContent(name);
         nameContent.setMinHeight(MIN_NAME_HEIGHT);
         nameContent.setMinWidth(MIN_WIDTH);
+        return nameContent;
+    }
+
+    private VerticalLayout getVerticalLayout(final TextContent nameContent) {
         TextContent attributesContent = new TextContent(attributes);
-        TextContent methodsContent = new TextContent(methods);
 
         VerticalLayout verticalGroupContent = new VerticalLayout();
         verticalGroupContent.add(nameContent);
         verticalGroupContent.add(attributesContent);
-        verticalGroupContent.add(methodsContent);
         separator = new Separator.LineSeparator(getBorderColor());
         verticalGroupContent.setSeparator(separator);
-
-        ContentInsideShape contentInsideShape = new ContentInsideRectangle(verticalGroupContent);
-
-        setBorder(new ContentBorder(contentInsideShape, getBorderColor()));
-        setBackground(new ContentBackground(getBorder(), getBackgroundColor()));
-        setContent(getBackground());
-
-        setTextColor(super.getTextColor());
+        return verticalGroupContent;
     }
 
     @Override
     public void setBorderColor(final Color borderColor)
     {
-        if(null != separator)
-        {
+        if(borderColor != null) {
             separator.setColor(borderColor);
+            super.setBorderColor(borderColor);
         }
-        super.setBorderColor(borderColor);
+
     }
 
     @Override
     public void setTextColor(final Color textColor)
     {
-        name.setTextColor(textColor);
-        attributes.setTextColor(textColor);
-        super.setTextColor(textColor);
+        if(textColor != null) {
+            name.setTextColor(textColor);
+            attributes.setTextColor(textColor);
+            super.setTextColor(textColor);
+        }
     }
 
     @Override
@@ -129,7 +126,9 @@ public class EnumNode extends ColorableNode
 
     public void setName(final LineText newValue)
     {
-        name.setText(newValue);
+        if(newValue != null) {
+            name.setText(newValue);
+        }
     }
 
     public LineText getName()
@@ -139,7 +138,9 @@ public class EnumNode extends ColorableNode
 
     public void setAttributes(final LineText newValue)
     {
-        attributes.setText(newValue);
+        if( newValue != null ) {
+            attributes.setText(newValue);
+        }
     }
 
     public MultiLineText getAttributes()
@@ -147,55 +148,12 @@ public class EnumNode extends ColorableNode
         return attributes;
     }
 
-    public void setMethods(final LineText newValue)
-    {
-        methods.setText(newValue);
-    }
-
-    public LineText getMethods()
-    {
-        return methods;
-    }
-
-    private SingleLineText name;
-    private MultiLineText attributes;
-    private MultiLineText methods;
-
-    private transient Separator separator;
-
-    private static final int MIN_NAME_HEIGHT = 45;
-    private static final int MIN_WIDTH = 100;
-
-    private static final String[][] SIGNATURE_REPLACE_KEYS = {
-        { "public ", "+ " },
-        { "package ", "~ " },
-        { "protected ", "# " },
-        { "private ", "- " },
-        { "property ", "/ " }
-    };
-
     private static final LineText.Converter NAME_CONVERTER = new LineText.Converter()
     {
         @Override
-        public OneLineText toLineString(String text)
+        public OneLineText toLineString(final String text)
         {
             return new PrefixDecorator( new LargeSizeDecorator(new OneLineText(text)), "<center>«enumeration»</center>");
-        }
-    };
-
-    private static final LineText.Converter PROPERTY_CONVERTER = new LineText.Converter()
-    {
-        @Override
-        public OneLineText toLineString(String text)
-        {
-            OneLineText lineString = new OneLineText(text);
-
-            for(String[] signature : SIGNATURE_REPLACE_KEYS)
-            {
-                lineString = new ReplaceSentenceDecorator(lineString, signature[0], signature[1]);
-            }
-
-            return lineString;
         }
     };
 }
