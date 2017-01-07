@@ -7,6 +7,7 @@ import com.horstmann.violet.framework.graphics.content.ContentInsideShape;
 import com.horstmann.violet.framework.graphics.content.TextContent;
 import com.horstmann.violet.framework.graphics.content.VerticalLayout;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
+import com.horstmann.violet.product.diagram.abstracts.node.INodeName;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
 import com.horstmann.violet.product.diagram.common.node.ColorableNode;
@@ -19,7 +20,7 @@ import com.horstmann.violet.product.diagram.property.text.decorator.PrefixDecora
 import com.horstmann.violet.product.diagram.property.text.decorator.ReplaceSentenceDecorator;
 import java.awt.Color;
 
-public class EnumNode extends ColorableNode
+public class EnumNode extends ColorableNode implements INodeName
 {
 
     private SingleLineText name;

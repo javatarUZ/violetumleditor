@@ -1,5 +1,6 @@
 package com.horstmann.violet.product.diagram.classes.node;
 
+import com.horstmann.violet.product.diagram.abstracts.node.INodeName;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -19,7 +20,7 @@ import com.horstmann.violet.product.diagram.property.text.SingleLineText;
 /**
  * A class node in a class diagram.
  */
-public class ClassNode extends ColorableNode
+public class ClassNode extends ColorableNode implements INodeName
 {
 	/**
      * Construct a class node with a default size
