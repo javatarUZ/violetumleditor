@@ -7,6 +7,5 @@ import com.horstmann.violet.product.diagram.property.text.LineText;
  * @author Sebastian Podgorski
  */
 public interface INodeName extends INode, IColorable {
-
     LineText getName();
 }
