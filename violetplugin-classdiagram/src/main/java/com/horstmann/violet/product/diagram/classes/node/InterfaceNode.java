@@ -1,5 +1,6 @@
 package com.horstmann.violet.product.diagram.classes.node;
 
+import com.horstmann.violet.product.diagram.abstracts.node.INodeName;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
@@ -19,7 +20,7 @@ import com.horstmann.violet.product.diagram.common.node.PointNode;
 /**
  * An interface node in a class diagram.
  */
-public class InterfaceNode extends ColorableNode
+public class InterfaceNode extends ColorableNode implements INodeName
 {
     /**
      * Construct an interface node with a default size and the text <<interface>>.

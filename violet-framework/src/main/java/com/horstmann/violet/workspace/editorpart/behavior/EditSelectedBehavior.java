@@ -1,28 +1,30 @@
 package com.horstmann.violet.workspace.editorpart.behavior;
 
-import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import com.horstmann.violet.framework.dialog.DialogFactory;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.BeanInjector;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.InjectedBean;
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
-import com.horstmann.violet.product.diagram.propertyeditor.CustomPropertyEditor;
-import com.horstmann.violet.product.diagram.propertyeditor.ICustomPropertyEditor;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
+import com.horstmann.violet.product.diagram.abstracts.node.INodeName;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.common.node.DiagramLinkNode;
+import com.horstmann.violet.product.diagram.propertyeditor.CustomPropertyEditor;
+import com.horstmann.violet.product.diagram.propertyeditor.ICustomPropertyEditor;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
 import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
 import com.horstmann.violet.workspace.editorpart.IEditorPartSelectionHandler;
+import com.horstmann.violet.workspace.spellchecker.SpellChecker;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class EditSelectedBehavior extends AbstractEditorPartBehavior
 {
@@ -104,9 +106,11 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                     // }
                 }
 
-                if (edited instanceof INode)
+                if (edited instanceof INodeName)
                 {
                     behaviorManager.fireWhileEditingNode((INode) edited, event);
+                    checkCorrectnessOfString((INodeName) edited);
+
                 }
                 if (edited instanceof IEdge)
                 {
@@ -168,8 +172,23 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
         }
         this.dialogFactory.showDialog(optionPane, tooltip+": "+this.dialogTitle, true);
     }
-    
-  
+
+    private void checkCorrectnessOfString(final INodeName edited) {
+        try {
+            String nodeName = edited.getName().getText();
+            nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
+
+            System.out.println(nodeName);
+            boolean a = SpellChecker.isCorrectWord(nodeName);
+            if (!a){
+                edited.setTextColor(Color.RED);
+            }else{
+                edited.setTextColor(Color.BLACK);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private IEditorPartSelectionHandler selectionHandler;
     private IEditorPart editorPart;
