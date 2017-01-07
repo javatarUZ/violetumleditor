@@ -178,9 +178,8 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
             String nodeName = edited.getName().getText();
             nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
 
-            System.out.println(nodeName);
-            boolean a = SpellChecker.isCorrectWord(nodeName);
-            if (!a){
+            boolean correctWord = SpellChecker.isCorrectWord(nodeName);
+            if (!correctWord){
                 edited.setTextColor(Color.RED);
             }else{
                 edited.setTextColor(Color.BLACK);
