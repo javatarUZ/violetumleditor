@@ -23,6 +23,7 @@ public class SpellChecker {
                 langTool.disableRule(rule.getId());
             }
         }
+
         List<RuleMatch> matches = langTool.check(word);
         int numberOfErrors = matches.size();
         if (numberOfErrors == 0){
