@@ -26,10 +26,6 @@ public class SpellChecker {
 
         List<RuleMatch> matches = langTool.check(word);
         int numberOfErrors = matches.size();
-        if (numberOfErrors == 0){
-            return true;
-        }else{
-            return false;
-        }
+        return numberOfErrors == 0;
     }
 }
