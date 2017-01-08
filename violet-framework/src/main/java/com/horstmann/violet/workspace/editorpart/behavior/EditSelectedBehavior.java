@@ -25,6 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import org.jetbrains.annotations.NotNull;
 
 public class EditSelectedBehavior extends AbstractEditorPartBehavior
 {
@@ -176,18 +177,26 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
     private void checkCorrectnessOfString(final INodeName edited) {
         try {
             String nodeName = edited.getName().getText();
-            nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
-            nodeName = nodeName.replaceAll("<html><center>«interface»</center> <font size=\\+1>", "");
-            nodeName = nodeName.replaceAll("<html><center>«enumeration»</center> <font size=\\+1>", "");
-            boolean correctWord = SpellChecker.isCorrectWord(nodeName);
-            if (!correctWord){
-                edited.setTextColor(Color.RED);
-            }else{
-                edited.setTextColor(Color.BLACK);
+            String[] splitNameByUpperCase = getSplitNodeName(nodeName);
+            for(String word : splitNameByUpperCase) {
+                boolean correctWord = SpellChecker.isCorrectWord(word);
+                if (!correctWord){
+                    edited.setTextColor(Color.RED);
+                }else{
+                    edited.setTextColor(Color.BLACK);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @NotNull
+    private String[] getSplitNodeName(String nodeName) {
+        nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
+        nodeName = nodeName.replaceAll("<html><center>«interface»</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>«enumeration»</center> <font size=\\+1>", "");
+        return nodeName.split("(?=\\p{Lu})");
     }
 
     private IEditorPartSelectionHandler selectionHandler;
