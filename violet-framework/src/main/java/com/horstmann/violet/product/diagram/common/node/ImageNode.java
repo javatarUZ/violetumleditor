@@ -22,6 +22,7 @@
 package com.horstmann.violet.product.diagram.common.node;
 //TODO Czy ta klasa jest wogole potrzebna
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -68,7 +69,7 @@ public class ImageNode extends ColorableNode
 
     /**
      * Sets current image
-     * 
+     *
      * @param img
      */
     public void setImage(Image img)
@@ -104,7 +105,7 @@ public class ImageNode extends ColorableNode
 
     /**
      * Gets the value of the text property.
-     * 
+     *
      * @return the text inside the note
      */
     public MultiLineText getText()
@@ -114,15 +115,15 @@ public class ImageNode extends ColorableNode
 
     /**
      * Sets the value of the text property.
-     * 
+     *
      * @param newValue the text inside the note
      */
     public void setText(MultiLineText newValue)
     {
         text = newValue;
     }
-    
-    
+
+
     public ImageIcon getImageIcon() {
 		return imageIcon;
 	}
@@ -133,7 +134,7 @@ public class ImageNode extends ColorableNode
 
 	/*
      * (non-Javadoc)
-     * 
+     *
      * @see com.horstmann.violet.product.diagram.abstracts.AbstractNode#draw(java.awt.Graphics2D)
      */
     public void draw(Graphics2D graphics)
@@ -174,7 +175,7 @@ public class ImageNode extends ColorableNode
 
     /**
      * This method should be kept as private as long as it is used for serialization purpose
-     * 
+     *
      * @return image content as an array
      * @throws InterruptedException
      */
@@ -194,8 +195,8 @@ public class ImageNode extends ColorableNode
         result.deleteCharAt(result.length() - 1);
         return result.toString();
     }
-    
-    
+
+
     /**
      * @return current image width
      */
@@ -215,8 +216,8 @@ public class ImageNode extends ColorableNode
     /**
      * This method should be kept as private as long as it is used for serialization purpose. Replaces current imageIcon by a new
      * one created with the image content guven is parameters
-     * 
-     * @param pixels image content
+     *
+     * @param imageContent image content
      * @param width image width
      * @param height image height
      */
@@ -257,6 +258,11 @@ public class ImageNode extends ColorableNode
     public String getToolTip()
     {
         return "";
+    }
+
+    @Override
+    public LineText getName() {
+        return null;
     }
 
     private static final String PIXEL_SEPARATOR = ":";

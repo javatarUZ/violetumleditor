@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.common.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -90,5 +91,10 @@ public class PointNode extends AbstractNode
     public String getToolTip()
     {
         return "";
+    }
+
+    @Override
+    public LineText getName() {
+        return null;
     }
 }

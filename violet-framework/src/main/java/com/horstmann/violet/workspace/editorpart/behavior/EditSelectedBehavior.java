@@ -1,11 +1,13 @@
 package com.horstmann.violet.workspace.editorpart.behavior;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import java.util.Collection;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -24,11 +26,9 @@ import com.horstmann.violet.workspace.editorpart.IEditorPart;
 import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
 import com.horstmann.violet.workspace.editorpart.IEditorPartSelectionHandler;
 
-public class EditSelectedBehavior extends AbstractEditorPartBehavior
-{
+public class EditSelectedBehavior extends AbstractEditorPartBehavior {
 
-    public EditSelectedBehavior(IEditorPart editorPart)
-    {
+    public EditSelectedBehavior(IEditorPart editorPart) {
         BeanInjector.getInjector().inject(this);
         ResourceBundleInjector.getInjector().inject(this);
         this.editorPart = editorPart;
@@ -38,63 +38,53 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
     }
 
     @Override
-    public void onMouseClicked(MouseEvent event)
-    {
+    public void onMouseClicked(MouseEvent event) {
         boolean isButton1Clicked = (event.getButton() == MouseEvent.BUTTON1);
-        if (event.getClickCount() > 1 && isButton1Clicked)
-        {
+        if (event.getClickCount() > 1 && isButton1Clicked) {
             double zoom = editorPart.getZoomFactor();
             Point2D mouseLocation = new Point2D.Double(event.getX() / zoom, event.getY() / zoom);
             processSelection(mouseLocation);
             editSelected();
         }
     }
-    
+
     /**
      * Selects double clicked element (inspired from SelectByClickBehavior class)
-     * 
+     *
      * @param mouseLocation
      */
-    private void processSelection(Point2D mouseLocation)
-    {
-    	this.selectionHandler.clearSelection();
-    	INode node = this.graph.findNode(mouseLocation);
+    private void processSelection(Point2D mouseLocation) {
+        this.selectionHandler.clearSelection();
+        INode node = this.graph.findNode(mouseLocation);
         IEdge edge = this.graph.findEdge(mouseLocation);
-        if (edge != null)
-        {
-        	this.selectionHandler.addSelectedElement(edge);
-        	if (this.selectionHandler.getSelectedEdges().size() == 1) {
-        		this.behaviorManager.fireOnEdgeSelected(edge);
-        	}
-        	return;
+        if (edge != null) {
+            this.selectionHandler.addSelectedElement(edge);
+            if (this.selectionHandler.getSelectedEdges().size() == 1) {
+                this.behaviorManager.fireOnEdgeSelected(edge);
+            }
+            return;
         }
-        if (node != null)
-        {
-        	this.selectionHandler.addSelectedElement(node);
-        	if (this.selectionHandler.getSelectedNodes().size() == 1) {
-        		this.behaviorManager.fireOnNodeSelected(node);
-        	}
+        if (node != null) {
+            this.selectionHandler.addSelectedElement(node);
+            if (this.selectionHandler.getSelectedNodes().size() == 1) {
+                this.behaviorManager.fireOnNodeSelected(node);
+            }
             return;
         }
     }
-    
 
-    public void editSelected()
-    {
-        final Object edited = selectionHandler.isNodeSelectedAtLeast() ? selectionHandler.getLastSelectedNode() : selectionHandler.getLastSelectedEdge();
-        if (edited == null)
-        {
+    public void editSelected() {
+        final Object edited = selectionHandler.isNodeSelectedAtLeast() ? selectionHandler.getLastSelectedNode() :
+            selectionHandler.getLastSelectedEdge();
+        if (edited == null) {
             return;
         }
         final ICustomPropertyEditor sheet = new CustomPropertyEditor(edited);
 
-        sheet.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(final PropertyChangeEvent event)
-            {
+        sheet.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(final PropertyChangeEvent event) {
                 // TODO : fix open file event
-                if (event.getSource() instanceof DiagramLinkNode)
-                {
+                if (event.getSource() instanceof DiagramLinkNode) {
                     // DiagramLinkNode ln = (DiagramLinkNode) event.getSource();
                     // DiagramLink dl = ln.getDiagramLink();
                     // if (dl != null && dl.getOpenFlag().booleanValue())
@@ -104,12 +94,20 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                     // }
                 }
 
-                if (edited instanceof INode)
-                {
+                if (edited instanceof INode) {
                     behaviorManager.fireWhileEditingNode((INode) edited, event);
+                    Collection<INode> graphNodes = graph.getAllNodes();
+                    for (INode graphNode : graphNodes) {
+                        if (!graphNode.equals(edited) && graphNode.getName().getLabelText()
+                            .equals(((INode) edited).getName().getLabelText())) {
+                            ((INode) edited).getName().setTextColor(Color.RED);
+                        } else {
+                            ((INode) edited).getName().setTextColor(Color.BLACK);
+
+                        }
+                    }
                 }
-                if (edited instanceof IEdge)
-                {
+                if (edited instanceof IEdge) {
                     behaviorManager.fireWhileEditingEdge((IEdge) edited, event);
                 }
                 editorPart.getSwingComponent().invalidate();
@@ -118,25 +116,20 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
 
         JOptionPane optionPane = new JOptionPane();
         optionPane.setOpaque(true);
-        optionPane.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                if ((event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)) && event.getNewValue() != null && event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
-                {
-                    if (sheet.isEditable())
-                    {
+        optionPane.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                if ((event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)) && event.getNewValue() != null
+                    && event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
+                    if (sheet.isEditable()) {
                         // This manages optionPane submits through a property
                         // listener because, as dialog display could be
                         // delegated
                         // (to Eclipse for example), host system can work in
                         // other threads
-                        if (edited instanceof INode)
-                        {
+                        if (edited instanceof INode) {
                             behaviorManager.fireAfterEditingNode((INode) edited);
                         }
-                        if (edited instanceof IEdge)
-                        {
+                        if (edited instanceof IEdge) {
                             behaviorManager.fireAfterEditingEdge((IEdge) edited);
                         }
                         editorPart.getSwingComponent().invalidate();
@@ -146,30 +139,24 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
         });
 
         String tooltip = "";
-        if (sheet.isEditable())
-        {
-            if (edited instanceof INode)
-            {
+        if (sheet.isEditable()) {
+            if (edited instanceof INode) {
                 tooltip = ((INode) edited).getToolTip();
                 this.behaviorManager.fireBeforeEditingNode((INode) edited);
             }
-            if (edited instanceof IEdge)
-            {
+            if (edited instanceof IEdge) {
                 tooltip = ((IEdge) edited).getToolTip();
                 this.behaviorManager.fireBeforeEditingEdge((IEdge) edited);
             }
             optionPane.setMessage(sheet.getAWTComponent());
         }
-        if (!sheet.isEditable())
-        {
+        if (!sheet.isEditable()) {
             JLabel label = new JLabel(this.uneditableBeanMessage);
             label.setFont(label.getFont().deriveFont(Font.PLAIN));
             optionPane.setMessage(label);
         }
-        this.dialogFactory.showDialog(optionPane, tooltip+": "+this.dialogTitle, true);
+        this.dialogFactory.showDialog(optionPane, tooltip + ": " + this.dialogTitle, true);
     }
-    
-  
 
     private IEditorPartSelectionHandler selectionHandler;
     private IEditorPart editorPart;

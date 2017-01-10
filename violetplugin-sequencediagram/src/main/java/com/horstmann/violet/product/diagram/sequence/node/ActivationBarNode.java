@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.sequence.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -115,6 +116,11 @@ public class ActivationBarNode extends ColorableNode
     public String getToolTip()
     {
         return SequenceDiagramConstant.SEQUENCE_DIAGRAM_RESOURCE.getString("tooltip.activation_bar_node");
+    }
+
+    @Override
+    public LineText getName() {
+        return null;
     }
 
     @Override

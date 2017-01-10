@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.state.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.geom.Point2D;
 
 import com.horstmann.violet.framework.graphics.content.*;
@@ -83,6 +84,11 @@ public class CircularFinalStateNode extends AbstractNode
     public String getToolTip()
     {
         return StateDiagramConstant.STATE_DIAGRAM_RESOURCE.getString("tooltip.scenario_end_node");
+    }
+
+    @Override
+    public LineText getName() {
+        return null;
     }
 
     /** default node_old diameter */

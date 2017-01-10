@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.activity.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.geom.Point2D;
 
 import com.horstmann.violet.framework.graphics.content.*;
@@ -83,6 +84,11 @@ public class ScenarioEndNode extends AbstractNode
     public String getToolTip()
     {
         return ActivityDiagramConstant.ACTIVITY_DIAGRAM_RESOURCE.getString("tooltip.scenario_end_node");
+    }
+
+    @Override
+    public LineText getName() {
+        return null;
     }
 
     @Override

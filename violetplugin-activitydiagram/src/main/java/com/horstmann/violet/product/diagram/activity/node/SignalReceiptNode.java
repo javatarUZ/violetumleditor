@@ -121,6 +121,11 @@ public class SignalReceiptNode extends ColorableNode
     }
 
     @Override
+    public LineText getName() {
+        return null;
+    }
+
+    @Override
     public Point2D getConnectionPoint(IEdge edge)
     {
         Point2D connectionPoint = super.getConnectionPoint(edge);

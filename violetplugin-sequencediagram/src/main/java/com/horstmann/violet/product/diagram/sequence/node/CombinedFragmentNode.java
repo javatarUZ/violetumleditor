@@ -142,6 +142,11 @@ public class CombinedFragmentNode extends AbstractNode implements IResizableNode
     }
 
     @Override
+    public LineText getName() {
+        return null;
+    }
+
+    @Override
     public boolean addConnection(IEdge edge)
     {
         return false;

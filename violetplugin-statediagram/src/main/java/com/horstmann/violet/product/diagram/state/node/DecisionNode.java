@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.state.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
@@ -98,6 +99,10 @@ public class DecisionNode extends ColorableNode
         return StateDiagramConstant.STATE_DIAGRAM_RESOURCE.getString("tooltip.decision_node");
     }
 
+    @Override
+    public LineText getName() {
+        return null;
+    }
 
     @Override
     public Point2D getConnectionPoint(IEdge edge)

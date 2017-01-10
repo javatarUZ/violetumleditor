@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.activity.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.util.List;
 import java.util.MissingResourceException;
 
@@ -98,6 +99,11 @@ public class SynchronizationBarNode extends ColorableNode
     public String getToolTip()
     {
         return ActivityDiagramConstant.ACTIVITY_DIAGRAM_RESOURCE.getString("tooltip.synchronization_node");
+    }
+
+    @Override
+    public LineText getName() {
+        return null;
     }
 
     @Override

@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.product.diagram.common.node;
 
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -140,11 +141,10 @@ public class NoteNode extends ColorableNode
         return ResourceBundleConstant.NODE_AND_EDGE_RESOURCE.getString("note_node.tooltip");
     }
 
-
-
-
-
-
+    @Override
+    public LineText getName() {
+        return null;
+    }
 
     @Override
     public int getZ()
