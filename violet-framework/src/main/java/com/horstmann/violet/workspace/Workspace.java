@@ -21,12 +21,6 @@
 
 package com.horstmann.violet.workspace;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import com.horstmann.violet.framework.file.IFile;
 import com.horstmann.violet.framework.file.IGraphFile;
 import com.horstmann.violet.framework.file.IGraphFileListener;
@@ -39,45 +33,32 @@ import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.workspace.editorpart.EditorPart;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
 import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
-import com.horstmann.violet.workspace.editorpart.behavior.AddEdgeBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.AddNodeBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.AddTransitionPointBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.ChangeToolByWeelBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.ColorizeBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.CutCopyPasteBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.DragGraphBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.DragSelectedBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.DragTransitionPointBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.EditSelectedBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.FileCouldBeSavedBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.ResizeNodeBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SelectAllBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SelectByClickBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SelectByDistanceBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SelectByLassoBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.ShowMenuOnRightClickBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SwingRepaintingBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.UndoRedoCompoundBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.ZoomByWheelBehavior;
+import com.horstmann.violet.workspace.editorpart.behavior.*;
 import com.horstmann.violet.workspace.sidebar.ISideBar;
 import com.horstmann.violet.workspace.sidebar.SideBar;
 import com.horstmann.violet.workspace.sidebar.graphtools.GraphTool;
 import com.horstmann.violet.workspace.sidebar.graphtools.IGraphToolsBarListener;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * Diagram workspace. It is a kind of package composed by a diagram put in a scroll panel, a side bar for tools and a status bar.
  * This the class to use when you want to work with diagrams outside from Violet (in Eclipse or NetBeans for example)
- * 
+ *
  * @author Alexandre de Pellegrin
  */
 public class Workspace implements IWorkspace
 {
     /**
      * Constructs a diagram panel with the specified graph
-     * 
+     *
      * @param graphFile
      */
-    public Workspace(IGraphFile graphFile)
+    public Workspace(final IGraphFile graphFile)
     {
         this.graphFile = graphFile;
         init();
@@ -85,11 +66,11 @@ public class Workspace implements IWorkspace
 
     /**
      * Constructs a diagram panel with the specified graph and a specified id
-     * 
+     *
      * @param graphFile
-     * @param id unique id
+     * @param id        unique id
      */
-    public Workspace(IGraphFile graphFile, Id id)
+    public Workspace(final IGraphFile graphFile, final Id id)
     {
         this.graphFile = graphFile;
         this.id = id;
@@ -111,36 +92,38 @@ public class Workspace implements IWorkspace
             public void onFileSaved()
             {
                 setTitle(getGraphName());
-            	updateTitle(false);
+                updateTitle(false);
             }
         });
         getAWTComponent().prepareLayout();
     }
-    
+
     /**
      * @return graph filename or the corresponding diagram name if the graph <br/>
      * hasn't been saved yet.
      */
-    private String getGraphName() {
-       String filename = this.graphFile.getFilename();
-       if (filename != null) {
-           return filename;
-       }
-       List<IDiagramPlugin> diagramPlugins = this.pluginRegistry.getDiagramPlugins();
-       Class<? extends IGraph> searchedClass = this.graphFile.getGraph().getClass();
-       for (IDiagramPlugin aDiagramPlugin : diagramPlugins)
-       {
-           if (aDiagramPlugin.getGraphClass().equals(searchedClass))
-           {
-               return aDiagramPlugin.getName();
-           }
-       }
-       return resourceBundle.getString("workspace.unknown");
+    private String getGraphName()
+    {
+        final String filename = this.graphFile.getFilename();
+        if (filename != null)
+        {
+            return filename;
+        }
+        final List<IDiagramPlugin> diagramPlugins = this.pluginRegistry.getDiagramPlugins();
+        final Class<? extends IGraph> searchedClass = this.graphFile.getGraph().getClass();
+        for (final IDiagramPlugin aDiagramPlugin : diagramPlugins)
+        {
+            if (aDiagramPlugin.getGraphClass().equals(searchedClass))
+            {
+                return aDiagramPlugin.getName();
+            }
+        }
+        return resourceBundle.getString("workspace.unknown");
     }
-    
-    
+
     @Override
-    public IGraphFile getGraphFile() {
+    public IGraphFile getGraphFile()
+    {
         return this.graphFile;
     }
 
@@ -150,7 +133,7 @@ public class Workspace implements IWorkspace
         if (this.graphEditor == null)
         {
             this.graphEditor = new EditorPart(this.graphFile.getGraph());
-            IEditorPartBehaviorManager behaviorManager = this.graphEditor.getBehaviorManager();
+            final IEditorPartBehaviorManager behaviorManager = this.graphEditor.getBehaviorManager();
             behaviorManager.addBehavior(new SelectByLassoBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
             behaviorManager.addBehavior(new SelectByClickBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
             behaviorManager.addBehavior(new SelectByDistanceBehavior(this.graphEditor));
@@ -171,6 +154,7 @@ public class Workspace implements IWorkspace
             behaviorManager.addBehavior(new CutCopyPasteBehavior(this.graphEditor));
             behaviorManager.addBehavior(new SwingRepaintingBehavior(this.graphEditor));
             behaviorManager.addBehavior(new ColorizeBehavior(this, this.getSideBar().getColorChoiceBar()));
+            behaviorManager.addBehavior(new DragWorkspaceBehavior(this));
         }
         return this.graphEditor;
     }
@@ -184,7 +168,7 @@ public class Workspace implements IWorkspace
             this.sideBar = new SideBar(this);
             this.sideBar.getGraphToolsBar().addListener(new IGraphToolsBarListener()
             {
-                public void toolSelectionChanged(GraphTool tool)
+                public void toolSelectionChanged(final GraphTool tool)
                 {
                     getEditorPart().getSelectionHandler().setSelectedTool(tool);
                 }
@@ -193,7 +177,6 @@ public class Workspace implements IWorkspace
         return this.sideBar;
     }
 
-
     @Override
     public String getTitle()
     {
@@ -201,7 +184,7 @@ public class Workspace implements IWorkspace
     }
 
     @Override
-    public void setTitle(String newValue)
+    public void setTitle(final String newValue)
     {
         title = newValue;
         fireTitleChanged(newValue);
@@ -209,32 +192,31 @@ public class Workspace implements IWorkspace
 
     /**
      * Fires a event to indicate that the title has been changed
-     * 
+     *
      * @param newTitle
      */
-    private void fireTitleChanged(String newTitle)
+    private void fireTitleChanged(final String newTitle)
     {
-        List<IWorkspaceListener> tl = cloneListeners();
-        int size = tl.size();
+        final List<IWorkspaceListener> tl = cloneListeners();
+        final int size = tl.size();
         if (size == 0) return;
 
         for (int i = 0; i < size; ++i)
         {
-            IWorkspaceListener aListener = tl.get(i);
+            final IWorkspaceListener aListener = tl.get(i);
             aListener.titleChanged(newTitle);
         }
     }
 
-
     /**
      * Set a status indicating that the graph needs to be saved
-     * 
+     *
      * @param isSaveNeeded
      */
-    private void updateTitle(boolean isSaveNeeded)
+    private void updateTitle(final boolean isSaveNeeded)
     {
-        String aTitle = getTitle();
-        String prefix = resourceBundle.getString("workspace.unsaved") + " ";
+        final String aTitle = getTitle();
+        final String prefix = resourceBundle.getString("workspace.unsaved") + " ";
         if (isSaveNeeded)
         {
             if (!aTitle.startsWith(prefix))
@@ -258,16 +240,15 @@ public class Workspace implements IWorkspace
     }
 
     @Override
-    public void setFilePath(String path)
+    public void setFilePath(final String path)
     {
         filePath = path;
-        File file = new File(path);
+        final File file = new File(path);
         setTitle(file.getName());
     }
 
-
     @Override
-    public synchronized void addListener(IWorkspaceListener l)
+    public synchronized void addListener(final IWorkspaceListener l)
     {
         if (!this.listeners.contains(l))
         {
@@ -284,14 +265,14 @@ public class Workspace implements IWorkspace
     /**
      * Fire an event to all listeners by calling
      */
-    public void fireMustOpenFile(IFile aFile)
+    public void fireMustOpenFile(final IFile aFile)
     {
-        List<IWorkspaceListener> tl = cloneListeners();
-        int size = tl.size();
+        final List<IWorkspaceListener> tl = cloneListeners();
+        final int size = tl.size();
         if (size == 0) return;
         for (int i = 0; i < size; ++i)
         {
-            IWorkspaceListener l = tl.get(i);
+            final IWorkspaceListener l = tl.get(i);
             l.mustOpenfile(aFile);
         }
     }
@@ -301,12 +282,12 @@ public class Workspace implements IWorkspace
      */
     private void fireSaveNeeded()
     {
-        List<IWorkspaceListener> tl = cloneListeners();
-        int size = tl.size();
+        final List<IWorkspaceListener> tl = cloneListeners();
+        final int size = tl.size();
         if (size == 0) return;
         for (int i = 0; i < size; ++i)
         {
-            IWorkspaceListener l = tl.get(i);
+            final IWorkspaceListener l = tl.get(i);
             l.graphCouldBeSaved();
         }
     }
@@ -330,20 +311,21 @@ public class Workspace implements IWorkspace
         }
         return this.workspacePanel;
     }
-    
+
     @Override
-    public void setAWTComponent(WorkspacePanel workspacePanel) {
-    	
-    	this.workspacePanel = workspacePanel;
+    public void setAWTComponent(final WorkspacePanel workspacePanel)
+    {
+
+        this.workspacePanel = workspacePanel;
     }
 
     public WorkspacePanel workspacePanel;
-    private IGraphFile graphFile;
+    private final IGraphFile graphFile;
     private IEditorPart graphEditor;
     private ISideBar sideBar;
     private String filePath;
     private String title;
-    private List<IWorkspaceListener> listeners = new ArrayList<IWorkspaceListener>();
+    private final List<IWorkspaceListener> listeners = new ArrayList<IWorkspaceListener>();
     private Id id;
 
     protected static ResourceBundle resourceBundle = ResourceBundle.getBundle("properties.OtherStrings", Locale.getDefault());
