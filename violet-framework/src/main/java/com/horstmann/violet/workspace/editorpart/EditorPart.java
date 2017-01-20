@@ -53,7 +53,7 @@ public class EditorPart extends JPanel implements IEditorPart
      * 
      * @param aGraph graph which will be drawn in this editor part
      */
-    public EditorPart(IGraph aGraph)
+    public EditorPart(final IGraph aGraph)
     {
         this.graph = aGraph;
         this.zoom = 1;
@@ -62,17 +62,17 @@ public class EditorPart extends JPanel implements IEditorPart
         addMouseListener(new MouseAdapter()
         {
 
-            public void mousePressed(MouseEvent event)
+            public void mousePressed(final MouseEvent event)
             {
                 behaviorManager.fireOnMousePressed(event);
             }
 
-            public void mouseReleased(MouseEvent event)
+            public void mouseReleased(final MouseEvent event)
             {
                 behaviorManager.fireOnMouseReleased(event);
             }
 
-            public void mouseClicked(MouseEvent event)
+            public void mouseClicked(final MouseEvent event)
             {
                 behaviorManager.fireOnMouseClicked(event);
             }
@@ -81,7 +81,7 @@ public class EditorPart extends JPanel implements IEditorPart
         addMouseWheelListener(new MouseWheelListener()
         {
             @Override
-            public void mouseWheelMoved(MouseWheelEvent e)
+            public void mouseWheelMoved(final MouseWheelEvent e)
             {
                 behaviorManager.fireOnMouseWheelMoved(e);
             }
@@ -89,13 +89,13 @@ public class EditorPart extends JPanel implements IEditorPart
 
         addMouseMotionListener(new MouseMotionAdapter()
         {
-            public void mouseDragged(MouseEvent event)
+            public void mouseDragged(final MouseEvent event)
             {
                 behaviorManager.fireOnMouseDragged(event);
             }
 
             @Override
-            public void mouseMoved(MouseEvent event)
+            public void mouseMoved(final MouseEvent event)
             {
                 behaviorManager.fireOnMouseMoved(event);
             }
@@ -124,10 +124,10 @@ public class EditorPart extends JPanel implements IEditorPart
         this.behaviorManager.fireBeforeRemovingSelectedElements();
         try
         {
-            List<INode> selectedNodes = selectionHandler.getSelectedNodes();
-            List<IEdge> selectedEdges = selectionHandler.getSelectedEdges();
-            IEdge[] edgesArray = selectedEdges.toArray(new IEdge[selectedEdges.size()]);
-            INode[] nodesArray = selectedNodes.toArray(new INode[selectedNodes.size()]);
+            final List<INode> selectedNodes = selectionHandler.getSelectedNodes();
+            final List<IEdge> selectedEdges = selectionHandler.getSelectedEdges();
+            final IEdge[] edgesArray = selectedEdges.toArray(new IEdge[selectedEdges.size()]);
+            final INode[] nodesArray = selectedNodes.toArray(new INode[selectedNodes.size()]);
             graph.removeNode(nodesArray);
             graph.removeEdge(edgesArray);
         }
@@ -148,7 +148,7 @@ public class EditorPart extends JPanel implements IEditorPart
         selectionHandler.clearSelection();
     }
 
-    public void selectElement(INode node)
+    public void selectElement(final INode node)
     {
         selectionHandler.addSelectedElement(node);
     }
@@ -156,13 +156,24 @@ public class EditorPart extends JPanel implements IEditorPart
     @Override
     public Dimension getPreferredSize()
     {
-        Dimension parentSize = getParent().getSize();
-        Rectangle2D bounds = graph.getClipBounds();
-        int width = Math.max((int) (zoom * bounds.getMaxX()), (int) parentSize.getWidth());
-        int height = Math.max((int) (zoom * bounds.getMaxY()), (int) parentSize.getHeight());
-        if (this.lastWidth != width || this.lastHeight != height) {
-            this.lastWidth = width;
-            this.lastHeight = height;
+        final Rectangle2D viewPortBounds = getParent().getBounds();
+        final Rectangle2D workspaceBounds = graph.getClipBounds();
+        final double viewPortMaxX = viewPortBounds.getMaxX();
+        final double viewPortMaxY = viewPortBounds.getMaxY();
+        final double gridMaxX = workspaceBounds.getMaxX();
+        final double gridMaxY = workspaceBounds.getMaxY();
+        final int width;
+        final int height;
+        if (viewPortBounds.contains(workspaceBounds))
+        {
+            width = (int) (zoom * viewPortMaxX);
+            height = (int) (zoom * viewPortMaxY);
+            graph.setBounds(viewPortBounds);
+        }
+        else
+        {
+            width = (int) (zoom * gridMaxX);
+            height = (int) (zoom * gridMaxY);
         }
         return new Dimension(width, height);
     }
@@ -172,7 +183,7 @@ public class EditorPart extends JPanel implements IEditorPart
      * 
      * @see com.horstmann.violet.framework.display.clipboard.IEditorPart#changeZoom(int)
      */
-    public void changeZoom(int steps)
+    public void changeZoom(final int steps)
     {
         final double FACTOR = Math.sqrt(Math.sqrt(2));
         for (int i = 1; i <= steps; i++)
@@ -206,8 +217,8 @@ public class EditorPart extends JPanel implements IEditorPart
      */
     public void growDrawingArea()
     {
-        IGraph g = getGraph();
-        Rectangle2D bounds = g.getClipBounds();
+        final IGraph g = getGraph();
+        final Rectangle2D bounds = g.getClipBounds();
         bounds.add(getBounds());
         g.setBounds(new Double(0, 0, GROW_SCALE_FACTOR * bounds.getWidth(), GROW_SCALE_FACTOR * bounds.getHeight()));
         invalidate();
@@ -221,7 +232,7 @@ public class EditorPart extends JPanel implements IEditorPart
      */
     public void clipDrawingArea()
     {
-        IGraph g = getGraph();
+        final IGraph g = getGraph();
         g.setBounds(null);
         invalidate();
         repaint();
@@ -234,7 +245,7 @@ public class EditorPart extends JPanel implements IEditorPart
     
     
     @Override
-    public void paintImmediately(int x, int y, int w, int h)
+    public void paintImmediately(final int x, final int y, final int w, final int h)
     {
         getSwingComponent().invalidate();
         super.paintImmediately(x, y, w, h);
@@ -242,21 +253,21 @@ public class EditorPart extends JPanel implements IEditorPart
     
     
     @Override
-    protected void paintComponent(Graphics g)
+    protected void paintComponent(final Graphics g)
     {
-        boolean valid = getSwingComponent().isValid();
+        final boolean valid = getSwingComponent().isValid();
         if (valid)
         {
             return;
         }
         getSwingComponent().revalidate(); // to inform parent scrollpane container
-        Graphics2D g2 = (Graphics2D) g;
+        final Graphics2D g2 = (Graphics2D) g;
         g2.scale(zoom, zoom);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         if (grid.isVisible()) grid.paint(g2);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graph.draw(g2);
-        for (IEditorPartBehavior behavior : this.behaviorManager.getBehaviors())
+        for (final IEditorPartBehavior behavior : this.behaviorManager.getBehaviors())
         {
             behavior.onPaint(g2);
         }
@@ -276,10 +287,6 @@ public class EditorPart extends JPanel implements IEditorPart
     {
         return this.behaviorManager;
     }
-
-    
-    
-
     
     private IGraph graph;
 
@@ -288,10 +295,6 @@ public class EditorPart extends JPanel implements IEditorPart
     private double zoom;
 
     private IEditorPartSelectionHandler selectionHandler = new EditorPartSelectionHandler();
-    
-    private int lastWidth = 0;
-    
-    private int lastHeight = 0;
 
     /**
      * Scale factor used to grow drawing area
