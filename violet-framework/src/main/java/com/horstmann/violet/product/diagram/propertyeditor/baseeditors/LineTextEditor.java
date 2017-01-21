@@ -1,5 +1,6 @@
 package com.horstmann.violet.product.diagram.propertyeditor.baseeditors;
 
+import com.horstmann.violet.framework.injection.resources.ResourceBundleConstant;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 
 import javax.swing.*;
@@ -13,8 +14,6 @@ import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyEditorSupport;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,44 +27,48 @@ abstract class LineTextEditor extends PropertyEditorSupport
     /**
      * Number of characters per line.
      */
-    static final int COLUMNS = 30;
+    static final int COLUMNS;
 
     /**
-     * Forward traversal key combination.
+     * Shortcut for forward focus traversal.
      */
-    //TODO:Przeniesc do propertiesów
-    private static final Set<KeyStroke> forwardKeyStrokes = new HashSet<>(1);
+    private static final String FORWARD_TRAVERSAL_SHORTCUT;
 
     /**
-     * Backward traversal key combination.
+     * Shortcut for backward focus traversal.
      */
-    private static final Set<KeyStroke> backwardKeyStrokes = new HashSet<>(1);
+    private static final String BACKWARD_TRAVERSAL_SHORTCUT;
+
+    /**
+     * Shortcut for text undo.
+     */
+    private static final String UNDO_SHORTCUT;
+
+    /**
+     * Shortcut for text redo.
+     */
+    private static final String REDO_SHORTCUT;
 
     static
     {
-        final KeyStroke tabKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
-        forwardKeyStrokes.add(tabKey);
-        final KeyStroke shiftTabKey = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK);
-        backwardKeyStrokes.add(shiftTabKey);
+        COLUMNS = Integer.parseInt(ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("columns"));
+        FORWARD_TRAVERSAL_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.forwardTraversal");
+        BACKWARD_TRAVERSAL_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.backwardTraversal");
+        UNDO_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.undo");
+        REDO_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.redo");
     }
 
     /**
      * Text component used to edit text.
      */
-    private JComponent textEditorComponent;
+    private volatile JComponent textEditorComponent;
 
-    /**
-     * @see PropertyEditorSupport#supportsCustomEditor()
-     */
     @Override
     public boolean supportsCustomEditor()
     {
         return true;
     }
 
-    /**
-     * @see PropertyEditorSupport#getCustomEditor()
-     */
     @Override
     public Component getCustomEditor()
     {
@@ -103,15 +106,19 @@ abstract class LineTextEditor extends PropertyEditorSupport
      */
     protected abstract JTextComponent createTextComponent();
 
-    //TODO:zabezpieczenie przed wielowoatkowoscia
     private JComponent getTextEditorComponent()
     {
-
-        if (this.textEditorComponent == null)
+        if (textEditorComponent == null)
         {
-            this.textEditorComponent = initializeTextEditorComponent();
+            synchronized (this)
+            {
+                if (textEditorComponent == null)
+                {
+                    textEditorComponent = initializeTextEditorComponent();
+                }
+            }
         }
-        return this.textEditorComponent;
+        return textEditorComponent;
     }
 
     /**
@@ -131,8 +138,24 @@ abstract class LineTextEditor extends PropertyEditorSupport
 
     private void addTraversalBehavior(final JTextComponent textComponent)
     {
-        textComponent.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeyStrokes);
-        textComponent.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeyStrokes);
+        addForwardTraversalBehavior(textComponent);
+        addBackwardTraversalBehavior(textComponent);
+    }
+
+    private void addForwardTraversalBehavior(final JTextComponent textComponent)
+    {
+        final KeyStroke forwardTraversal = KeyStroke.getKeyStroke(FORWARD_TRAVERSAL_SHORTCUT);
+        final Set<KeyStroke> forwardTraversalKeyStrokes = new HashSet<KeyStroke>();
+        forwardTraversalKeyStrokes.add(forwardTraversal);
+        textComponent.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardTraversalKeyStrokes);
+    }
+
+    private void addBackwardTraversalBehavior(final JTextComponent textComponent)
+    {
+        final KeyStroke backwardTraversal = KeyStroke.getKeyStroke(BACKWARD_TRAVERSAL_SHORTCUT);
+        final Set<KeyStroke> backwardTraversalKeyStrokes = new HashSet<KeyStroke>();
+        backwardTraversalKeyStrokes.add(backwardTraversal);
+        textComponent.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardTraversalKeyStrokes);
     }
 
     /**
@@ -263,7 +286,7 @@ abstract class LineTextEditor extends PropertyEditorSupport
         {
             final String undoActionKey = "Undo";
             undoAction = new UndoAction();
-            final KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK);
+            final KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(UNDO_SHORTCUT);
             textComponent.getInputMap().put(undoKeyStroke, undoActionKey);
             textComponent.getActionMap().put(undoActionKey, undoAction);
         }
@@ -272,7 +295,7 @@ abstract class LineTextEditor extends PropertyEditorSupport
         {
             final String redoActionKey = "Redo";
             redoAction = new RedoAction();
-            final KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
+            final KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(REDO_SHORTCUT);
             textComponent.getInputMap().put(redoKeyStroke, redoActionKey);
             textComponent.getActionMap().put(redoActionKey, redoAction);
         }
