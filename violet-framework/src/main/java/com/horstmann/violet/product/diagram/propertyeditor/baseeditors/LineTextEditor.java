@@ -9,8 +9,6 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 import java.awt.*;
@@ -20,284 +18,28 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyEditorSupport;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * A abstract property editor for the LineText type.
- * Adds common actions to text editors like : undo, redo, traversing behaviour.
+ * Base text editor with specified behaviors like redo/undo/traversal.
  **/
 abstract class LineTextEditor extends PropertyEditorSupport
 {
 
-    @Override
-    public boolean supportsCustomEditor()
-    {
-        return true;
-    }
-
-    @Override
-    public Component getCustomEditor()
-    {
-        setSourceEditor();
-        final JPanel panel = new JPanel();
-        panel.add(getTextEditorComponent());
-        return panel;
-    }
-
-    private JComponent getTextEditorComponent()
-    {
-        if (this.textEditorComponent == null)
-        {
-            this.textEditorComponent = initializeTextEditorComponent();
-        }
-        return this.textEditorComponent;
-    }
-
-    private JComponent initializeTextEditorComponent()
-    {
-        final JTextComponent textComponent = createTextComponent();
-        addTraversalBehaviour(textComponent);
-        addUndoRedoBehaviour(textComponent);
-        addDocumentListener(textComponent);
-        initializeEditText(textComponent);
-        return createScrollPanel(textComponent);
-    }
-
-    private void addTraversalBehaviour(final JTextComponent textComponent)
-    {
-        textComponent.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeyStrokes);
-        textComponent.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeyStrokes);
-    }
-
-    private void addUndoRedoBehaviour(final JTextComponent textComponent)
-    {
-        undoManager = new UndoManager();
-        addUndoableEditListener(textComponent);
-        addUndoBehaviour(textComponent);
-        addRedoBehaviour(textComponent);
-    }
-
-    private void addUndoableEditListener(final JTextComponent textComponent)
-    {
-        final UndoHandler undoHandler = new UndoHandler();
-        final Document document = textComponent.getDocument();
-        document.addUndoableEditListener(undoHandler);
-    }
-
-    private void addUndoBehaviour(final JTextComponent textComponent)
-    {
-        undoAction = new UndoAction();
-        final KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK);
-        textComponent.getInputMap().put(undoKeyStroke, UNDO_ACTION_NAME);
-        textComponent.getActionMap().put(UNDO_ACTION_NAME, undoAction);
-    }
-
-    private void addRedoBehaviour(final JTextComponent textComponent)
-    {
-        redoAction = new RedoAction();
-        final KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
-        textComponent.getInputMap().put(redoKeyStroke, REDO_ACTION_NAME);
-        textComponent.getActionMap().put(REDO_ACTION_NAME, redoAction);
-    }
-
-    private void addDocumentListener(final JTextComponent textComponent)
-    {
-        textComponent.getDocument().addDocumentListener(new DocumentListener()
-        {
-            public void insertUpdate(final DocumentEvent e)
-            {
-                updateEditorText(textComponent);
-                firePropertyChange();
-            }
-
-            public void removeUpdate(final DocumentEvent e)
-            {
-                updateEditorText(textComponent);
-                firePropertyChange();
-            }
-
-            public void changedUpdate(final DocumentEvent e)
-            {
-            }
-        });
-    }
-
-    private void initializeEditText(final JTextComponent textComponent)
-    {
-        final String textToEdit = getSourceEditor().toEdit();
-        textComponent.setText(textToEdit);
-    }
-
-    private void updateEditorText(final JTextComponent textComponent)
-    {
-        final String actualText = textComponent.getText();
-        getSourceEditor().setText(actualText);
-    }
-
     /**
-     * Save each of text insert into history which is contained by undoManager
-     */
-    private class UndoHandler implements UndoableEditListener
-    {
-
-        /**
-         * Messaged when the Document has created an edit, the edit is added to
-         * undoManager, an instance of UndoManager.
-         */
-        public void undoableEditHappened(final UndoableEditEvent undoableEditEvent)
-        {
-            final UndoableEdit undoableEdit = undoableEditEvent.getEdit();
-            undoManager.addEdit(undoableEdit);
-            undoAction.update();
-            redoAction.update();
-        }
-    }
-
-    /**
-     * Defines undo text action which is performed when specified combination of keys is pressed.
-     */
-    private class UndoAction extends AbstractAction
-    {
-        UndoAction()
-        {
-            super();
-            setEnabled(false);
-        }
-
-        /**
-         * Undo text if possible and update redo and undo action status.
-         *
-         * @param e a undo event
-         */
-        public void actionPerformed(final ActionEvent e)
-        {
-            try
-            {
-                undoManager.undo();
-            }
-            catch (final CannotUndoException exception)
-            {
-                final String exceptionMessage = "Could not perform undo operation!";
-                LOG.log(Level.SEVERE, exceptionMessage, exception);
-            }
-            update();
-            redoAction.update();
-        }
-
-        /**
-         * Updates undo action status(enabled/disabled).
-         */
-        void update()
-        {
-            if (undoManager.canUndo())
-            {
-                setEnabled(true);
-                return;
-            }
-                setEnabled(false);
-        }
-    }
-
-    /**
-     * Defines redo text action which is performed when specified combination of keys is pressed.
-     */
-    private class RedoAction extends AbstractAction
-    {
-        RedoAction()
-        {
-            super();
-            setEnabled(false);
-        }
-
-        /**
-         * Redo text if possible and update redo and undo action status.
-         *
-         * @param e a redo event
-         */
-        public void actionPerformed(final ActionEvent e)
-        {
-            try
-            {
-                undoManager.redo();
-            }
-            catch (final CannotRedoException exception)
-            {
-                final String exceptionMessage = "Could not perform redo operation!";
-                LOG.log(Level.SEVERE, exceptionMessage, exception);
-            }
-            update();
-            undoAction.update();
-        }
-
-        /**
-         * Updates redo action status(enabled/disabled).
-         */
-        void update()
-        {
-            if (undoManager.canRedo())
-            {
-                setEnabled(true);
-                return;
-            }
-                setEnabled(false);
-        }
-    }
-
-    /**
-     * Creates scroll panel which contains editor text component.
-     *
-     * @param textComponent editor text component
-     * @return editor text component with scroll panel
-     */
-    protected JComponent createScrollPanel(final JTextComponent textComponent)
-    {
-        return textComponent;
-    }
-
-    /**
-     * Set source of text which will be edited.
-     */
-    protected abstract void setSourceEditor();
-
-    /**
-     * Get source of text which will be edited.
-     */
-    protected abstract LineText getSourceEditor();
-
-    /**
-     * Create text field where edited text is displayed.
-     *
-     * @return editor text field
-     */
-    protected abstract JTextComponent createTextComponent();
-
-    private static final Logger LOG = Logger.getLogger(LineTextEditor.class.getName());
-
-    /**
-     * Number of characters in one line.
+     * Number of characters per line.
      */
     static final int COLUMNS = 30;
 
     /**
-     * Contains characters which gives behaviour of traversing forward.
+     * Forward traversal key combination.
      */
-    private static final Set<KeyStroke> forwardKeyStrokes = new HashSet<KeyStroke>(1);
+    //TODO:Przeniesc do propertiesów
+    private static final Set<KeyStroke> forwardKeyStrokes = new HashSet<>(1);
 
     /**
-     * Contains characters which gives behaviour of traversing backward.
+     * Backward traversal key combination.
      */
-    private static final Set<KeyStroke> backwardKeyStrokes = new HashSet<KeyStroke>(1);
-
-    /**
-     * Used for mapping keyStroke to undo action.
-     */
-    private static final String UNDO_ACTION_NAME = "Undo";
-
-    /**
-     * Used for mapping keyStroke to redo action.
-     */
-    private static final String REDO_ACTION_NAME = "Redo";
+    private static final Set<KeyStroke> backwardKeyStrokes = new HashSet<>(1);
 
     static
     {
@@ -308,23 +50,322 @@ abstract class LineTextEditor extends PropertyEditorSupport
     }
 
     /**
-     * Contains history of operations and manage with them.
-     */
-    private UndoManager undoManager;
-
-    /**
-     * Action of undo text when specified keys are pressed.
-     */
-    private UndoAction undoAction;
-
-    /**
-     * Action of redo text when specified keys are pressed.
-     */
-    private RedoAction redoAction;
-
-    /**
-     * Text field where edited text is displayed
+     * Text component used to edit text.
      */
     private JComponent textEditorComponent;
 
+    /**
+     * @see PropertyEditorSupport#supportsCustomEditor()
+     */
+    @Override
+    public boolean supportsCustomEditor()
+    {
+        return true;
+    }
+
+    /**
+     * @see PropertyEditorSupport#getCustomEditor()
+     */
+    @Override
+    public Component getCustomEditor()
+    {
+        setSourceEditor();
+        final JPanel panel = new JPanel();
+        panel.add(getTextEditorComponent());
+        return panel;
+    }
+
+    /**
+     * Creates scroll panel with editor text component.
+     *
+     * @param textComponent text editor component
+     * @return editor text component with scroll panel
+     */
+    protected JComponent createScrollPanel(final JTextComponent textComponent)
+    {
+        return textComponent;
+    }
+
+    /**
+     * Sets source of text which is edited.
+     */
+    protected abstract void setSourceEditor();
+
+    /**
+     * Gets source of text which is edited.
+     */
+    protected abstract LineText getSourceEditor();
+
+    /**
+     * Creates text component used to edit text.
+     *
+     * @return text editor component.
+     */
+    protected abstract JTextComponent createTextComponent();
+
+    //TODO:zabezpieczenie przed wielowoatkowoscia
+    private JComponent getTextEditorComponent()
+    {
+
+        if (this.textEditorComponent == null)
+        {
+            this.textEditorComponent = initializeTextEditorComponent();
+        }
+        return this.textEditorComponent;
+    }
+
+    /**
+     * Creates editor with behaviors like undo/redo/traversal.
+     *
+     * @return text editor component.
+     */
+    private JComponent initializeTextEditorComponent()
+    {
+        final JTextComponent textComponent = createTextComponent();
+        addTraversalBehavior(textComponent);
+        addUndoRedoBehavior(textComponent);
+        addDocumentListener(textComponent);
+        initializeEditorText(textComponent);
+        return createScrollPanel(textComponent);
+    }
+
+    private void addTraversalBehavior(final JTextComponent textComponent)
+    {
+        textComponent.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeyStrokes);
+        textComponent.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeyStrokes);
+    }
+
+    /**
+     * Adds behavior to undo/redo text when specified keys are pressed.
+     *
+     * @param textComponent text editor component.
+     */
+    private void addUndoRedoBehavior(final JTextComponent textComponent)
+    {
+        final UndoableTextBehaviorManager undoableTextBehaviorManager = new UndoableTextBehaviorManager();
+        undoableTextBehaviorManager.addUndoRedoBehavior(textComponent);
+    }
+
+    /**
+     * Adds listener for insert/remove characters in editor.
+     *
+     * @param textComponent text editor component.
+     */
+    private void addDocumentListener(final JTextComponent textComponent)
+    {
+        final EditorTextListener editorTextListener = new EditorTextListener(textComponent);
+        textComponent.getDocument().addDocumentListener(editorTextListener);
+    }
+
+    /**
+     * Initialize editor text with source text.
+     *
+     * @param textComponent text editor component.
+     */
+    private void initializeEditorText(final JTextComponent textComponent)
+    {
+        final String textToEdit = getSourceEditor().toEdit();
+        textComponent.setText(textToEdit);
+    }
+
+    /**
+     * Defines action for insert/remove text in editor.
+     */
+    private class EditorTextListener implements DocumentListener
+    {
+
+        private JTextComponent textComponent;
+
+        EditorTextListener(final JTextComponent textComponent)
+        {
+            this.textComponent = textComponent;
+        }
+
+        /**
+         * Updates source text when insert happen.
+         *
+         * @param e the document event
+         */
+        @Override
+        public void insertUpdate(final DocumentEvent e)
+        {
+            updateSourceText(textComponent);
+            firePropertyChange();
+        }
+
+        /**
+         * Updates source text when remove happen.
+         *
+         * @param e the document event
+         */
+        @Override
+        public void removeUpdate(final DocumentEvent e)
+        {
+            updateSourceText(textComponent);
+            firePropertyChange();
+        }
+
+        @Override
+        public void changedUpdate(final DocumentEvent e)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        private void updateSourceText(final JTextComponent textComponent)
+        {
+            final String actualText = textComponent.getText();
+            getSourceEditor().setText(actualText);
+        }
+
+    }
+
+    /**
+     * Adds undo / redo behavior for text component.
+     */
+    private class UndoableTextBehaviorManager
+    {
+
+        /**
+         * Contains and mange with operation history.
+         */
+        private UndoManager undoManager;
+
+        /**
+         * Action performed when text undo.
+         */
+        private UndoAction undoAction;
+
+        /**
+         * Action performed when text redo.
+         */
+        private RedoAction redoAction;
+
+        UndoableTextBehaviorManager()
+        {
+            this.undoManager = new UndoManager();
+        }
+
+        private void addUndoRedoBehavior(final JTextComponent textComponent)
+        {
+            addUndoableEditListener(textComponent);
+            addUndoBehavior(textComponent);
+            addRedoBehavior(textComponent);
+        }
+
+        private void addUndoableEditListener(final JTextComponent textComponent)
+        {
+            final UndoHandler undoHandler = new UndoHandler();
+            final Document document = textComponent.getDocument();
+            document.addUndoableEditListener(undoHandler);
+        }
+
+        private void addUndoBehavior(final JTextComponent textComponent)
+        {
+            final String undoActionKey = "Undo";
+            undoAction = new UndoAction();
+            final KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK);
+            textComponent.getInputMap().put(undoKeyStroke, undoActionKey);
+            textComponent.getActionMap().put(undoActionKey, undoAction);
+        }
+
+        private void addRedoBehavior(final JTextComponent textComponent)
+        {
+            final String redoActionKey = "Redo";
+            redoAction = new RedoAction();
+            final KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
+            textComponent.getInputMap().put(redoKeyStroke, redoActionKey);
+            textComponent.getActionMap().put(redoActionKey, redoAction);
+        }
+
+        /**
+         * Update status of undo/redo action
+         */
+        private void updateActions()
+        {
+            undoAction.update();
+            redoAction.update();
+        }
+
+        /**
+         * Handles undoable operations.
+         */
+        private class UndoHandler implements UndoableEditListener
+        {
+
+            /**
+             * @see UndoableEditListener#undoableEditHappened(UndoableEditEvent)
+             */
+            @Override
+            public void undoableEditHappened(final UndoableEditEvent undoableEditEvent)
+            {
+                final UndoableEdit undoableEdit = undoableEditEvent.getEdit();
+                undoManager.addEdit(undoableEdit);
+                updateActions();
+            }
+        }
+
+        /**
+         * Action performed when text undo.
+         */
+        private class UndoAction extends AbstractAction
+        {
+            UndoAction()
+            {
+                setEnabled(false);
+            }
+
+            /**
+             * Handles undo action.
+             *
+             * @param e undo event
+             */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                undoManager.undo();
+                updateActions();
+            }
+
+            /**
+             * Updates undo action enabled status.
+             */
+            void update()
+            {
+                final boolean canUndo = undoManager.canUndo();
+                setEnabled(canUndo);
+            }
+        }
+
+        /**
+         * Action performed when text redo.
+         */
+        private class RedoAction extends AbstractAction
+        {
+            RedoAction()
+            {
+                setEnabled(false);
+            }
+
+            /**
+             * Handles redo action.
+             *
+             * @param e redo event
+             */
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                undoManager.redo();
+                updateActions();
+            }
+
+            /**
+             * Updates redo action enabled status.
+             */
+            void update()
+            {
+                final boolean canRedo = undoManager.canRedo();
+                setEnabled(canRedo);
+            }
+        }
+    }
 }
