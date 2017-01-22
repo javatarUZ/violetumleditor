@@ -22,6 +22,34 @@ import java.util.List;
 public class AddEdgeBehavior extends AbstractEditorPartBehavior
 {
 
+    private static final Color PURPLE = new Color(0.7f, 0.4f, 0.7f);
+
+    private static final int CONNECT_THRESHOLD = 8;
+
+    private Point2D firstMousePoint = null;
+
+    private Point2D lastMousePoint = null;
+
+    private IEditorPart editorPart;
+
+    private IGraph graph;
+
+    private IGridSticker grid;
+
+    private IEditorPartSelectionHandler selectionHandler;
+
+    private IEditorPartBehaviorManager behaviorManager;
+
+    private IGraphToolsBar graphToolsBar;
+
+    private boolean isLinkingInProgress = false;
+
+    private boolean isLinkBySeparatedClicks = false;
+
+    private List<Point2D> transitionPoints = new ArrayList<Point2D>();
+
+    private IEdge newEdge = null;
+
     public AddEdgeBehavior(IEditorPart editorPart, IGraphToolsBar graphToolsBar)
     {
         this.editorPart = editorPart;
@@ -157,12 +185,12 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
         double zoom = editorPart.getZoomFactor();
         final Point2D mousePoint = new Point2D.Double(event.getX() / zoom, event.getY() / zoom);
         INode targetNode = graph.findNode(mousePoint);
-        this.isLinkingInProgress = (targetNode != null);
+        this.isLinkingInProgress = targetNode != null;
         this.firstMousePoint = grid.snap(mousePoint);
         this.lastMousePoint = grid.snap(mousePoint);
         GraphTool selectedTool = this.selectionHandler.getSelectedTool();
         IEdge prototype = (IEdge) selectedTool.getNodeOrEdge();
-        this.newEdge = (IEdge) prototype.clone();
+        this.newEdge = prototype.clone();
         this.newEdge.setId(new Id());
     }
 
@@ -261,33 +289,5 @@ public class AddEdgeBehavior extends AbstractEditorPartBehavior
         g2.draw(path);
         g2.setColor(oldColor);
     }
-
-    private static final Color PURPLE = new Color(0.7f, 0.4f, 0.7f);
-
-    private static final int CONNECT_THRESHOLD = 8;
-
-    private Point2D firstMousePoint = null;
-
-    private Point2D lastMousePoint = null;
-
-    private IEditorPart editorPart;
-
-    private IGraph graph;
-
-    private IGridSticker grid;
-
-    private IEditorPartSelectionHandler selectionHandler;
-
-    private IEditorPartBehaviorManager behaviorManager;
-
-    private IGraphToolsBar graphToolsBar;
-
-    private boolean isLinkingInProgress = false;
-
-    private boolean isLinkBySeparatedClicks = false;
-
-    private List<Point2D> transitionPoints = new ArrayList<Point2D>();
-
-    private IEdge newEdge = null;
 
 }
