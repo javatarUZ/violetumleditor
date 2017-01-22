@@ -39,7 +39,7 @@ public final class ResourceBundleConstant
     public static final ResourceBundle NODE_AND_EDGE_RESOURCE = ResourceBundle.getBundle(NODE_AND_EDGE_STRINGS, Locale.getDefault());
     public static final ResourceBundle EDITOR_RESOURCE = ResourceBundle.getBundle(EDITOR_STRINGS, Locale.getDefault());
     public static final ResourceBundle FILE_RESOURCE = ResourceBundle.getBundle(FILE_STRINGS, Locale.getDefault());
-    public static final ResourceBundle LINE_EDITOR_RESOURCE = ResourceBundle.getBundle(TEXT_EDITOR_STRINGS, Locale.getDefault());
+    public static final ResourceBundle TEXT_EDITOR_RESOURCE = ResourceBundle.getBundle(TEXT_EDITOR_STRINGS, Locale.getDefault());
     public static final ResourceBundle OTHER_RESOURCE = ResourceBundle.getBundle(OTHER_STRINGS, Locale.getDefault());
 
     private ResourceBundleConstant()

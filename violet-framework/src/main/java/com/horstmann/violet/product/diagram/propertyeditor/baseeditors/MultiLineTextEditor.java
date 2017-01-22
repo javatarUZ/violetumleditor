@@ -45,7 +45,7 @@ public class MultiLineTextEditor extends LineTextEditor
 
     static
     {
-        ROWS = Integer.parseInt(ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("rows"));
+        ROWS = Integer.parseInt(ResourceBundleConstant.TEXT_EDITOR_RESOURCE.getString("rows"));
     }
 
     @Override

@@ -30,32 +30,32 @@ abstract class LineTextEditor extends PropertyEditorSupport
     static final int COLUMNS;
 
     /**
-     * Shortcut for forward focus traversal.
+     * Keyboard shortcut for forward focus traversal.
      */
     private static final String FORWARD_TRAVERSAL_SHORTCUT;
 
     /**
-     * Shortcut for backward focus traversal.
+     * Keyboard shortcut for backward focus traversal.
      */
     private static final String BACKWARD_TRAVERSAL_SHORTCUT;
 
     /**
-     * Shortcut for text undo.
+     * Keyboard shortcut for text undo.
      */
     private static final String UNDO_SHORTCUT;
 
     /**
-     * Shortcut for text redo.
+     * Keyboard shortcut for text redo.
      */
     private static final String REDO_SHORTCUT;
 
     static
     {
-        COLUMNS = Integer.parseInt(ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("columns"));
-        FORWARD_TRAVERSAL_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.forwardTraversal");
-        BACKWARD_TRAVERSAL_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.backwardTraversal");
-        UNDO_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.undo");
-        REDO_SHORTCUT = ResourceBundleConstant.LINE_EDITOR_RESOURCE.getString("shortcut.redo");
+        COLUMNS = Integer.parseInt(ResourceBundleConstant.TEXT_EDITOR_RESOURCE.getString("columns"));
+        FORWARD_TRAVERSAL_SHORTCUT = ResourceBundleConstant.TEXT_EDITOR_RESOURCE.getString("shortcut.forwardTraversal");
+        BACKWARD_TRAVERSAL_SHORTCUT = ResourceBundleConstant.TEXT_EDITOR_RESOURCE.getString("shortcut.backwardTraversal");
+        UNDO_SHORTCUT = ResourceBundleConstant.TEXT_EDITOR_RESOURCE.getString("shortcut.undo");
+        REDO_SHORTCUT = ResourceBundleConstant.TEXT_EDITOR_RESOURCE.getString("shortcut.redo");
     }
 
     /**
@@ -301,7 +301,7 @@ abstract class LineTextEditor extends PropertyEditorSupport
         }
 
         /**
-         * Update status of undo/redo action
+         * Updates status of undo/redo action
          */
         private void updateActions()
         {
