@@ -36,7 +36,9 @@ import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
 import com.horstmann.violet.workspace.editorpart.behavior.*;
 import com.horstmann.violet.workspace.sidebar.ISideBar;
 import com.horstmann.violet.workspace.sidebar.SideBar;
+import com.horstmann.violet.workspace.sidebar.colortools.IColorChoiceBar;
 import com.horstmann.violet.workspace.sidebar.graphtools.GraphTool;
+import com.horstmann.violet.workspace.sidebar.graphtools.IGraphToolsBar;
 import com.horstmann.violet.workspace.sidebar.graphtools.IGraphToolsBarListener;
 
 import java.io.File;
@@ -132,31 +134,45 @@ public class Workspace implements IWorkspace
     {
         if (this.graphEditor == null)
         {
-            this.graphEditor = new EditorPart(this.graphFile.getGraph());
-            final IEditorPartBehaviorManager behaviorManager = this.graphEditor.getBehaviorManager();
-            behaviorManager.addBehavior(new SelectByLassoBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new SelectByClickBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new SelectByDistanceBehavior(this.graphEditor));
-            behaviorManager.addBehavior(new SelectAllBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new AddNodeBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new AddEdgeBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new AddTransitionPointBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new DragSelectedBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new DragTransitionPointBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new DragGraphBehavior(this));
-            behaviorManager.addBehavior(new EditSelectedBehavior(this.graphEditor));
-            behaviorManager.addBehavior(new FileCouldBeSavedBehavior(this.getGraphFile()));
-            behaviorManager.addBehavior(new ResizeNodeBehavior(this.graphEditor, this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new ZoomByWheelBehavior(this.getEditorPart()));
-            behaviorManager.addBehavior(new ChangeToolByWeelBehavior(this.getSideBar().getGraphToolsBar()));
-            behaviorManager.addBehavior(new ShowMenuOnRightClickBehavior(this.graphEditor));
-            behaviorManager.addBehavior(new UndoRedoCompoundBehavior(this.graphEditor));
-            behaviorManager.addBehavior(new CutCopyPasteBehavior(this.graphEditor));
-            behaviorManager.addBehavior(new SwingRepaintingBehavior(this.graphEditor));
-            behaviorManager.addBehavior(new ColorizeBehavior(this, this.getSideBar().getColorChoiceBar()));
-            behaviorManager.addBehavior(new DragWorkspaceBehavior(this));
+            synchronized (Workspace.class)
+            {
+                if (this.graphEditor == null)
+                {
+                    initEditorPart();
+                }
+            }
         }
         return this.graphEditor;
+    }
+
+    private void initEditorPart()
+    {
+        this.graphEditor = new EditorPart(this.graphFile.getGraph());
+        final IEditorPartBehaviorManager behaviorManager = this.graphEditor.getBehaviorManager();
+        final IGraphToolsBar graphToolsBar = this.getSideBar().getGraphToolsBar();
+        final IColorChoiceBar colorChoiceBar = this.getSideBar().getColorChoiceBar();
+
+        behaviorManager.addBehavior(new SelectByLassoBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new SelectByClickBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new SelectByDistanceBehavior(this.graphEditor));
+        behaviorManager.addBehavior(new SelectAllBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new AddNodeBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new AddEdgeBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new AddTransitionPointBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new DragSelectedBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new DragTransitionPointBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new DragGraphBehavior(this));
+        behaviorManager.addBehavior(new DragEditorPartBehavior(this));
+        behaviorManager.addBehavior(new EditSelectedBehavior(this.graphEditor));
+        behaviorManager.addBehavior(new FileCouldBeSavedBehavior(this.getGraphFile()));
+        behaviorManager.addBehavior(new ResizeNodeBehavior(this.graphEditor, graphToolsBar));
+        behaviorManager.addBehavior(new ZoomByWheelBehavior(this.getEditorPart()));
+        behaviorManager.addBehavior(new ChangeToolByWeelBehavior(graphToolsBar));
+        behaviorManager.addBehavior(new ShowMenuOnRightClickBehavior(this.graphEditor));
+        behaviorManager.addBehavior(new UndoRedoCompoundBehavior(this.graphEditor));
+        behaviorManager.addBehavior(new CutCopyPasteBehavior(this.graphEditor));
+        behaviorManager.addBehavior(new SwingRepaintingBehavior(this.graphEditor));
+        behaviorManager.addBehavior(new ColorizeBehavior(this, colorChoiceBar));
     }
 
     @Override
@@ -164,17 +180,27 @@ public class Workspace implements IWorkspace
     {
         if (this.sideBar == null)
         {
-
-            this.sideBar = new SideBar(this);
-            this.sideBar.getGraphToolsBar().addListener(new IGraphToolsBarListener()
+            synchronized (Workspace.class)
             {
-                public void toolSelectionChanged(final GraphTool tool)
+                if (this.sideBar == null)
                 {
-                    getEditorPart().getSelectionHandler().setSelectedTool(tool);
+                    initSideBar();
                 }
-            });
+            }
         }
         return this.sideBar;
+    }
+
+    private void initSideBar()
+    {
+        this.sideBar = new SideBar(this);
+        this.sideBar.getGraphToolsBar().addListener(new IGraphToolsBarListener()
+        {
+            public void toolSelectionChanged(final GraphTool tool)
+            {
+                getEditorPart().getSelectionHandler().setSelectedTool(tool);
+            }
+        });
     }
 
     @Override
@@ -321,8 +347,8 @@ public class Workspace implements IWorkspace
 
     public WorkspacePanel workspacePanel;
     private final IGraphFile graphFile;
-    private IEditorPart graphEditor;
-    private ISideBar sideBar;
+    private volatile IEditorPart graphEditor;
+    private volatile ISideBar sideBar;
     private String filePath;
     private String title;
     private final List<IWorkspaceListener> listeners = new ArrayList<IWorkspaceListener>();
