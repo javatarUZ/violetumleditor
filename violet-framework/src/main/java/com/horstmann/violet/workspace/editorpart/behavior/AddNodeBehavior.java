@@ -35,14 +35,10 @@ public class AddNodeBehavior extends AbstractEditorPartBehavior implements IGrap
     }
     
     @Override
-    public void onMouseClicked(MouseEvent event)
+    public void onMouseReleased(MouseEvent event)
     {
     	this.draggedNode = null;
-    	
-        if (event.getClickCount() > 1)
-        {
-            return;
-        }
+
         if (event.getButton() != MouseEvent.BUTTON1) {
             return;
         }
@@ -62,18 +58,18 @@ public class AddNodeBehavior extends AbstractEditorPartBehavior implements IGrap
         INode prototype = (INode) selectedTool.getNodeOrEdge();
         INode newNode = (INode) prototype.clone();
         newNode.setId(new Id());
-        
+
         boolean added = addNodeAtPoint(newNode, newNodeLocation);
         if (added)
         {
             selectionHandler.setSelectedElement(newNode);
-            
+
             if (!KeyModifierUtil.isCtrl(event)) {
 	            selectionHandler.setSelectedTool(GraphTool.SELECTION_TOOL);
 	            graphToolsBar.setSelectedTool(GraphTool.SELECTION_TOOL);
 	            graphToolsBar.getAWTComponent().invalidate();
             }
-            
+
             editorPart.getSwingComponent().invalidate();
         }
     }
@@ -127,13 +123,13 @@ public class AddNodeBehavior extends AbstractEditorPartBehavior implements IGrap
 	        INode prototype = (INode) selectedTool.getNodeOrEdge();
 	        this.draggedNode = (INode) prototype.clone();
 	        this.draggedNode.setId(new Id());
-	        
-	        
+
+
 			double zoom = editorPart.getZoomFactor();
 	        final Point2D initialLocation = new Point2D.Double(OUTSIDE_SCREEN_POSITION / zoom, OUTSIDE_SCREEN_POSITION / zoom);
 	        IGridSticker gridSticker = graph.getGridSticker();
 	        Point2D newNodeLocation = gridSticker.snap(initialLocation);
-			
+
 	        boolean added = addNodeAtPoint(this.draggedNode, newNodeLocation);
 	        if (added)
 	        {
@@ -159,7 +155,7 @@ public class AddNodeBehavior extends AbstractEditorPartBehavior implements IGrap
 		this.dragging = false;
 		if (this.draggedNode != null) {
 			MouseEvent outEvent = SwingUtilities.convertMouseEvent((Component)event.getSource(), event, editorPart.getSwingComponent());
-            
+
 			if (outEvent.getX() < 0 || outEvent.getY() < 0) {
 				this.graph.removeNode(this.draggedNode);
 				editorPart.getSwingComponent().invalidate();
@@ -167,7 +163,7 @@ public class AddNodeBehavior extends AbstractEditorPartBehavior implements IGrap
 			} else {
 				moveDraggedNode(outEvent);
 			}
-			
+
 	        this.draggedNode = null;
 		}
 	}
@@ -177,9 +173,9 @@ public class AddNodeBehavior extends AbstractEditorPartBehavior implements IGrap
         final Point2D mousePoint = new Point2D.Double(convertedEvent.getX() / zoom, convertedEvent.getY() / zoom);
         IGridSticker gridSticker = graph.getGridSticker();
         Point2D newNodeLocation = gridSticker.snap(mousePoint);
-		
+
         draggedNode.setLocation(newNodeLocation);
-        
+
         selectionHandler.setSelectedElement(this.draggedNode);
         editorPart.getSwingComponent().invalidate();
         editorPart.getSwingComponent().repaint();
