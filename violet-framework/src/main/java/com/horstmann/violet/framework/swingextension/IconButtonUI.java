@@ -50,22 +50,23 @@ public class IconButtonUI extends BasicButtonUI
     {
         super();
     }
-    
-    public IconButtonUI(double scalingValue) {
+
+    public IconButtonUI(double scalingValue)
+    {
         this.scalingValue = scalingValue;
     }
 
     protected void installDefaults(AbstractButton b)
     {
         super.installDefaults(b);
-        b.setPreferredSize(new Dimension(30,41)); //26x26 is default
+        b.setPreferredSize(new Dimension(26, 26));
         b.setOpaque(true);
         b.setBorderPainted(false);
         b.setRolloverEnabled(true);
         b.setBorder(new BevelBorder(0));
         prepareIcons(b);
     }
-    
+
     @Override
     public void installUI(JComponent c)
     {
@@ -73,7 +74,7 @@ public class IconButtonUI extends BasicButtonUI
         this.originalIcon = b.getIcon();
         super.installUI(c);
     }
-    
+
     @Override
     public void uninstallUI(JComponent c)
     {
@@ -142,7 +143,7 @@ public class IconButtonUI extends BasicButtonUI
             return buffer;
         }
     }
-    
+
     /**
      * @param img
      * @return an icon from an image
@@ -151,14 +152,15 @@ public class IconButtonUI extends BasicButtonUI
     {
         return new IconUIResource(new ImageIcon(img));
     }
-    
+
     /**
      * @param img to scale
      * @param newWidth desired width
      * @param newHeight desired height
      * @return a scaled image
      */
-    private Image getScaledImage(Image img, int newWidth, int newHeight) {
+    private Image getScaledImage(Image img, int newWidth, int newHeight)
+    {
         ImageFilter filter = new AreaAveragingScaleFilter(newWidth, newHeight);
         ImageProducer prod = new FilteredImageSource(img.getSource(), filter);
         return Toolkit.getDefaultToolkit().createImage(prod);
@@ -210,9 +212,9 @@ public class IconButtonUI extends BasicButtonUI
     private Icon darkerIcon;
     private Icon brighterIcon;
     private Icon originalIcon;
-    
+
     /**
-     * Allows to scale icon image 
+     * Allows to scale icon image
      */
     private double scalingValue = -1;
 
