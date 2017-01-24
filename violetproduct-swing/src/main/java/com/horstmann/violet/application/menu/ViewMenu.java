@@ -21,19 +21,21 @@
 
 package com.horstmann.violet.application.menu;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import com.horstmann.violet.UMLEditorApplication;
 import com.horstmann.violet.application.gui.MainFrame;
 import com.horstmann.violet.framework.dialog.DialogFactory;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.BeanInjector;
@@ -43,6 +45,7 @@ import com.horstmann.violet.framework.injection.resources.annotation.ResourceBun
 import com.horstmann.violet.framework.theme.ITheme;
 import com.horstmann.violet.framework.theme.ThemeInfo;
 import com.horstmann.violet.framework.theme.ThemeManager;
+import com.horstmann.violet.framework.util.ResourceManager;
 import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
 
@@ -61,7 +64,7 @@ public class ViewMenu extends JMenu
      * 
      * @param mainFrame where this menu is attached
      */
-    @ResourceBundleBean(key = "view")
+@ResourceBundleBean(key = "view")
     public ViewMenu(MainFrame mainFrame)
     {
         BeanInjector.getInjector().inject(this);
@@ -166,6 +169,7 @@ public class ViewMenu extends JMenu
         	String themeName = themeInfo.getName();
             final String themeClassName = themeInfo.getThemeClass().getName();
             JMenuItem lafMenu = new JCheckBoxMenuItem(themeName);
+
             lafMenu.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent e)
@@ -173,14 +177,54 @@ public class ViewMenu extends JMenu
                     performChangeLookAndFeel(themeClassName);
                 }
             });
+
             changeLookAndFeelMenu.add(lafMenu);
             lookAndFeelButtonGroup.add(lafMenu);
             if (themeClassName.equals(preferedLafName))
             {
                 lafMenu.setSelected(true);
             }
+
         }
         this.add(changeLookAndFeelMenu);
+
+        performButtonGroup();
+
+        this.add(language);
+
+         langEnglish.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              performEnglishLanguage();
+
+            }
+        });
+        language.add(langEnglish);
+
+        langFrench.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        language.add(langFrench);
+
+        langGreman.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        language.add(langGreman);
+
+        langPolish.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        language.add(langPolish);
+
 
     }
 
@@ -223,6 +267,7 @@ public class ViewMenu extends JMenu
         IWorkspace workspace = mainFrame.getActiveWorkspace();
         workspace.getEditorPart().clipDrawingArea();
     }
+
 
     /**
      * Performs display smaller grid action
@@ -277,16 +322,53 @@ public class ViewMenu extends JMenu
      */
     private void performChangeLookAndFeel(String className)
     {
-    	this.themeManager.setPreferedLookAndFeel(className);
+        if (mainFrame.getWorkspaceList().size() == 0) return;
+        this.themeManager.setPreferedLookAndFeel(className);
         JOptionPane optionPane = new JOptionPane();
         optionPane.setMessage(changeLAFDialogMessage);
         optionPane.setIcon(changeLAFDialogIcon);
-        this.dialogFactory.showDialog(optionPane, changeLAFDialogTitle, true);
+
     }
 
     /**
-     * Current editor frame
+     * Performs creation of leanguage button group
      */
+    private void performButtonGroup(){
+        ButtonGroup langButtonGroup = new ButtonGroup();
+
+        langButtonGroup.add(langEnglish);
+        langButtonGroup.add(langFrench);
+        langButtonGroup.add(langGreman);
+        langButtonGroup.add(langPolish);
+    }
+
+
+    /**
+     * Performs change language to english
+     *
+     */
+    private void performEnglishLanguage(){
+        if (mainFrame.getWorkspaceList().size() == 0) return;
+        IWorkspace workspace = mainFrame.getActiveWorkspace();
+        IEditorPart editorPart = workspace.getEditorPart();
+        performLocale("fr","FR");
+        editorPart.getSwingComponent().repaint();
+
+    }
+
+    /**
+     * Performs locale set
+     * @param country
+     * @param region
+     */
+    private void performLocale(String country,String region){
+        Locale locale = new Locale(country,region);
+        setDefaultLocale(locale);
+        BeanInjector.getInjector().inject(this);
+        ResourceBundleInjector.getInjector().inject(this);
+    }
+
+
     private MainFrame mainFrame;
 
     @ResourceBundleBean(key = "view.zoom_out")
@@ -307,11 +389,26 @@ public class ViewMenu extends JMenu
     @ResourceBundleBean(key = "view.larger_grid")
     private JMenuItem largerGrid;
 
+    @ResourceBundleBean(key = "view.langEnglish")
+    private JCheckBoxMenuItem langEnglish;
+
+    @ResourceBundleBean(key = "view.langPolish")
+    private JCheckBoxMenuItem langPolish;
+
+    @ResourceBundleBean(key = "view.langFrench")
+    private JCheckBoxMenuItem langFrench;
+
+    @ResourceBundleBean(key = "view.langGerman")
+    private JCheckBoxMenuItem langGreman;
+
     @ResourceBundleBean(key = "view.hide_grid")
     private JCheckBoxMenuItem hideGridItem;
 
     @ResourceBundleBean(key = "view.change_laf")
     private JMenu changeLookAndFeelMenu;
+
+    @ResourceBundleBean(key = "view.language")
+    private JMenu language;
 
     @ResourceBundleBean(key = "dialog.change_laf.title")
     private String changeLAFDialogTitle;

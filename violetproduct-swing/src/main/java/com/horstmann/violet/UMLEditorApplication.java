@@ -86,6 +86,7 @@ public class UMLEditorApplication
                 Locale.setDefault(Locale.ENGLISH);
                 System.out.println("Language forced to english.");
             }
+
             if ("-help".equals(arg) || "-?".equals(arg))
             {
                 System.out.println("Violet UML Editor command line help. Options are :");

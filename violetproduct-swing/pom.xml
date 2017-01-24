@@ -63,6 +63,25 @@
 					<include>**/*</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources/properties</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/java/com/horstmann/violet/application/menu</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+
 		</resources>
 		<plugins>
 			<plugin>
