@@ -173,13 +173,13 @@ public class BallAndSocketNode extends ColorableNode
         int orientationAngle = orientation.getSelectedValue();
         int directionAngle = getDirectionAngle(direction);
 
-        boolean supportDirection = (Types.BALL_AND_SOCKET == type && (directionAngle + 180) % 360 == orientationAngle);
-        if (supportDirection)
+        boolean isSupportedDirection = (Types.BALL_AND_SOCKET == type && (directionAngle + 180) % 360 == orientationAngle);
+        if (isSupportedDirection)
         {
             orientationAngle += 180;
         }
 
-        if (Types.SOCKET == type || supportDirection)
+        if (Types.SOCKET == type || isSupportedDirection)
         {
             double radians = Math.toRadians(orientationAngle);
             return new Point2D.Double(
@@ -243,6 +243,9 @@ public class BallAndSocketNode extends ColorableNode
         }
     }
 
+    /**
+     * Refresh socket in layout
+     */
     private void refreshSocket()
     {
         ballAndSocketLayout.remove(socketBorder);
@@ -254,6 +257,9 @@ public class BallAndSocketNode extends ColorableNode
         ballAndSocketLayout.add(socketBorder);
     }
 
+    /**
+     * Refresh ball in layout.
+     */
     private void refreshBall()
     {
         ballAndSocketLayout.remove(ballBackground);
