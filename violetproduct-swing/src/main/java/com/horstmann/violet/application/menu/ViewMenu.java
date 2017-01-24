@@ -192,38 +192,38 @@ public class ViewMenu extends JMenu
 
         this.add(language);
 
-         langEnglish.addActionListener(new ActionListener() {
+        languageEnglish.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              performEnglishLanguage();
+                performLanguage("en","EN","MenuFactory");
 
             }
         });
-        language.add(langEnglish);
+        language.add(languageEnglish);
 
-        langFrench.addActionListener(new ActionListener() {
+        languageFrench.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                performLanguage("fr","FR","MenuFactory_fr");
             }
         });
-        language.add(langFrench);
+        language.add(languageFrench);
 
-        langGreman.addActionListener(new ActionListener() {
+        languageGreman.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                performLanguage("de","DE","MenuFactory_de");
             }
         });
-        language.add(langGreman);
+        language.add(languageGreman);
 
-        langPolish.addActionListener(new ActionListener() {
+        languagePolish.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                performLanguage("pl","PL","MenuFactory_pl");
             }
         });
-        language.add(langPolish);
+        language.add(languagePolish);
 
 
     }
@@ -331,41 +331,45 @@ public class ViewMenu extends JMenu
     }
 
     /**
-     * Performs creation of leanguage button group
+     * Performs creation of language button group
      */
     private void performButtonGroup(){
         ButtonGroup langButtonGroup = new ButtonGroup();
 
-        langButtonGroup.add(langEnglish);
-        langButtonGroup.add(langFrench);
-        langButtonGroup.add(langGreman);
-        langButtonGroup.add(langPolish);
+        langButtonGroup.add(languageEnglish);
+        langButtonGroup.add(languageFrench);
+        langButtonGroup.add(languageGreman);
+        langButtonGroup.add(languagePolish);
     }
 
 
     /**
-     * Performs change language to english
+     * Performs change language
      *
      */
-    private void performEnglishLanguage(){
+    private void performLanguage(String country,String region,String bundle){
         if (mainFrame.getWorkspaceList().size() == 0) return;
         IWorkspace workspace = mainFrame.getActiveWorkspace();
         IEditorPart editorPart = workspace.getEditorPart();
-        performLocale("fr","FR");
+        performLocale(country,region,bundle);
         editorPart.getSwingComponent().repaint();
-
+        mainFrame.repaint();
     }
+
+
 
     /**
      * Performs locale set
      * @param country
      * @param region
+     * @param bundle
      */
-    private void performLocale(String country,String region){
+    private void performLocale(String country,String region,String bundle){
         Locale locale = new Locale(country,region);
         setDefaultLocale(locale);
-        BeanInjector.getInjector().inject(this);
-        ResourceBundleInjector.getInjector().inject(this);
+        ResourceBundle.clearCache();
+        ResourceBundle resourceBundle= ResourceBundle.getBundle(bundle,new Locale("fr","FR"));
+        ResourceBundleInjector.getInjector().inject(resourceBundle);
     }
 
 
@@ -389,17 +393,17 @@ public class ViewMenu extends JMenu
     @ResourceBundleBean(key = "view.larger_grid")
     private JMenuItem largerGrid;
 
-    @ResourceBundleBean(key = "view.langEnglish")
-    private JCheckBoxMenuItem langEnglish;
+    @ResourceBundleBean(key = "view.languageEnglish")
+    private JCheckBoxMenuItem languageEnglish;
 
-    @ResourceBundleBean(key = "view.langPolish")
-    private JCheckBoxMenuItem langPolish;
+    @ResourceBundleBean(key = "view.languagePolish")
+    private JCheckBoxMenuItem languagePolish;
 
-    @ResourceBundleBean(key = "view.langFrench")
-    private JCheckBoxMenuItem langFrench;
+    @ResourceBundleBean(key = "view.languageFrench")
+    private JCheckBoxMenuItem languageFrench;
 
-    @ResourceBundleBean(key = "view.langGerman")
-    private JCheckBoxMenuItem langGreman;
+    @ResourceBundleBean(key = "view.languageGerman")
+    private JCheckBoxMenuItem languageGreman;
 
     @ResourceBundleBean(key = "view.hide_grid")
     private JCheckBoxMenuItem hideGridItem;
