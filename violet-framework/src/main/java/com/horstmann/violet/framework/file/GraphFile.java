@@ -150,9 +150,9 @@ public class GraphFile implements IGraphFile {
 
     @Override
     public void removeBackup() {
-        File autoSaveDirectory = new File(autoSaveDirectoryPath);
-        List<File> autoSaveFiles = listFiles(autoSaveDirectory);
-        List<Long> fileTimeCreation = filesCreationTime(autoSaveFiles);
+        final File autoSaveDirectory = new File(autoSaveDirectoryPath);
+        final List<File> autoSaveFiles = listFiles(autoSaveDirectory);
+        final List<Long> fileTimeCreation = filesCreationTime(autoSaveFiles);
         deleteAutoSavedFiles(autoSaveDirectory, autoSaveFiles, fileTimeCreation);
     }
 
@@ -280,35 +280,36 @@ public class GraphFile implements IGraphFile {
         engine.start();
     }
 
-    private List<File> listFiles(File autoSaveDirectory) {
-        File[] listOfFiles = autoSaveDirectory.listFiles();
-        List<File> listOfFilesFinal = new ArrayList<File>();
+    private List<File> listFiles(final File autoSaveDirectory) {
+        final File[] listOfFiles = autoSaveDirectory.listFiles();
+        final List<File> listOfFilesFinal = new ArrayList<File>();
 
         for (int index = 0; index < listOfFiles.length; index++) {
-            if (listOfFiles[index].isFile()) {
-                listOfFilesFinal.add(listOfFiles[index]);
-                System.out.println("File list: " + listOfFiles[index]);
+            final File file = listOfFiles[index];
+            if (file.isFile()) {
+                listOfFilesFinal.add(file);
             }
         }
-
         return listOfFilesFinal;
     }
 
-    private List<Long> filesCreationTime(List<File> autoSaveFiles) {
+    private List<Long> filesCreationTime(final List<File> autoSaveFiles) {
         List<Long> creationTime = new ArrayList<Long>();
         for (File savedFile : autoSaveFiles) {
-            if (!creationTime.contains(savedFile.lastModified())) {
-                creationTime.add(savedFile.lastModified());
+            final long lastModification = savedFile.lastModified();
+            if (!creationTime.contains(lastModification)) {
+                creationTime.add(lastModification);
             }
         }
         Collections.sort(creationTime);
         return creationTime;
     }
 
-    private void deleteAutoSavedFiles(File autoSaveDirectory, List<File> autoSaveFiles, List<Long> fileTimeCreation) {
-        Long directorySize = FileUtils.sizeOfDirectory(autoSaveDirectory);
+    private void deleteAutoSavedFiles(final File autoSaveDirectory, final List<File> autoSaveFiles,
+                                      final List<Long> fileTimeCreation) {
+        final Long directorySize = FileUtils.sizeOfDirectory(autoSaveDirectory);
         while (maxSizeOfDirectory < directorySize && !fileTimeCreation.isEmpty()) {
-            for (File saveFile : autoSaveFiles) {
+            for (final File saveFile : autoSaveFiles) {
                 if (saveFile.lastModified() == fileTimeCreation.get(0)) {
                     saveFile.delete();
                 }
