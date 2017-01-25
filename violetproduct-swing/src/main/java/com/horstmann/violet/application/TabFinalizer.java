@@ -33,7 +33,7 @@ public class TabFinalizer {
      * Invokes tab finalization and return if the tab is ready to close.
      *
      * @param workspace workspace of a tab that should be finalized
-     * @return status if the tab is ready to close.
+     * @return true if the tab is ready to close.
      */
     public boolean isReadyToClose(final IWorkspace workspace)
     {

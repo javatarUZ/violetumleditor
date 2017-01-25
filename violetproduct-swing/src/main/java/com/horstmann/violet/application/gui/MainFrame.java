@@ -132,10 +132,10 @@ public class MainFrame extends JFrame {
             {
                 public String getText()
                 {
-                    final int i = tabbedPane.indexOfTabComponent(CloseableTabComponent.this);
-                    if (i != -1)
+                    final int newTabIndex = tabbedPane.indexOfTabComponent(CloseableTabComponent.this);
+                    if (newTabIndex != -1)
                     {
-                        return tabbedPane.getTitleAt(i);
+                        return tabbedPane.getTitleAt(newTabIndex);
                     }
                     return null;
                 }
@@ -162,9 +162,9 @@ public class MainFrame extends JFrame {
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    final int index = tabbedPane
+                    final int clickedTabIndex = tabbedPane
                             .indexOfTabComponent(CloseableTabComponent.this);
-                    closeTab(index);
+                    closeTab(clickedTabIndex);
                     tabbedPane.revalidate();
                     tabbedPane.repaint();
                 }
@@ -174,8 +174,7 @@ public class MainFrame extends JFrame {
         /**
          * Close tab with specified index
          */
-        private void closeTab(final int index)
-        {
+        private void closeTab(final int index) {
             if (index != -1)
             {
                 final IWorkspace workspace = getWorkspaceAt(index);
@@ -425,7 +424,7 @@ public class MainFrame extends JFrame {
     private void createTabbedPane()
     {
         this.tabbedPane = new JTabbedPane();
-        this.tabbedPane.add(new JPanel());
+//        this.tabbedPane.add(new JPanel());
         this.tabbedPane.addChangeListener(new TabSwitchActionHandler());
         getContentPane().add(this.tabbedPane);
     }
