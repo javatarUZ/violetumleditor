@@ -167,8 +167,8 @@ public class ViewMenu extends JMenu
         languageEnglish.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLanguage("en","EN","MenuFactory");
-
+                performLocale("en","EN","MenuFactory");
+                mainFrame.repaint();
             }
         });
         language.add(languageEnglish);
@@ -176,7 +176,8 @@ public class ViewMenu extends JMenu
         languageFrench.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLanguage("fr","FR","MenuFactory_fr");
+                performLocale("fr","FR","MenuFactory_fr");
+                mainFrame.repaint();
             }
         });
         language.add(languageFrench);
@@ -184,7 +185,8 @@ public class ViewMenu extends JMenu
         languageGreman.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLanguage("de","DE","MenuFactory_de");
+                performLocale("de","DE","MenuFactory_de");
+                mainFrame.repaint();
             }
         });
         language.add(languageGreman);
@@ -192,7 +194,8 @@ public class ViewMenu extends JMenu
         languagePolish.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performLanguage("pl","PL","MenuFactory_pl");
+                performLocale("pl","PL","MenuFactory_pl");
+                mainFrame.repaint();
             }
         });
         language.add(languagePolish);
@@ -363,23 +366,6 @@ public class ViewMenu extends JMenu
 
 
     /**
-     * Performs change language
-     *
-     * @param localeLanguage
-     * @param localeCountry
-     * @param bundle
-     */
-    private void performLanguage(String localeLanguage,String localeCountry,String bundle){
-        if (mainFrame.getWorkspaceList().size() == 0) return;
-        IWorkspace workspace = mainFrame.getActiveWorkspace();
-        IEditorPart editorPart = workspace.getEditorPart();
-        performLocale(localeLanguage,localeCountry,bundle);
-        editorPart.getSwingComponent().repaint();
-
-    }
-
-
-    /**
      * Performs locale set
      *
      * @param localeLanguage
@@ -387,7 +373,7 @@ public class ViewMenu extends JMenu
      * @param bundle
      */
     private void performLocale(String localeLanguage,String localeCountry,String bundle){
-        Locale locale = new Locale(localeLanguage,localeCountry);
+        Locale locale = new Locale(localeLanguage,localeCountry);;
         setDefaultLocale(locale);
         ResourceBundle.clearCache();
         ResourceBundle resourceBundle= ResourceBundle.getBundle(bundle,locale);
