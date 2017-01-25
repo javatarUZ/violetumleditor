@@ -50,20 +50,12 @@ public class TabFinalizer {
      */
     private boolean finalizeTab(final IGraphFile currentGraphFile)
     {
-
-        if (currentGraphFile.isSaveRequired())
-        {
             final boolean ready = performUserOption(currentGraphFile);
             if (ready)
             {
                 setActiveDiagramPreference();
             }
             return ready;
-        } else
-            {
-            setActiveDiagramPreference();
-            return true;
-        }
     }
 
     /**
