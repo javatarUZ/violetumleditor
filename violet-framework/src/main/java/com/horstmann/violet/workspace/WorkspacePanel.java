@@ -1,22 +1,16 @@
 package com.horstmann.violet.workspace;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.RepaintManager;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
@@ -41,6 +35,24 @@ public class WorkspacePanel extends JPanel
         add(scrollGPanel, BorderLayout.CENTER);
         JScrollPane scrollSideBarPanel = getScrollableSideBar();
         add(scrollSideBarPanel, BorderLayout.WEST);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollSideBarPanel, scrollGPanel);
+        splitPane.setDividerSize(5);
+        splitPane.addPropertyChangeListener("dividerLocation", new PropertyChangeListener()
+        {
+            @Override
+            public void propertyChange(PropertyChangeEvent e)
+            {
+                int location = ((Integer) e.getNewValue()).intValue();
+                System.out.println(location);
+
+                if (location > 245)
+                {
+                    JSplitPane splitPane = (JSplitPane) e.getSource();
+                    splitPane.setDividerLocation(245);
+                }
+            }
+        });
+        add(splitPane);
 //        JScrollPane scrollStatusBarPanel = getScrollableStatusBar();
 //        add(scrollStatusBarPanel, BorderLayout.SOUTH);
         refreshDisplay();
