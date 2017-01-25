@@ -1,4 +1,4 @@
-package com.horstmann.violet.helper;
+package com.horstmann.violet.workspace.editorpart;
 
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.workspace.editorpart.EditorPart;

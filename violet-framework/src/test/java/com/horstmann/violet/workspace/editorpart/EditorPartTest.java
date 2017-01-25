@@ -1,7 +1,6 @@
 package com.horstmann.violet.workspace.editorpart;
 
 import com.horstmann.violet.framework.injection.resources.ResourceBundleConstant;
-import com.horstmann.violet.helper.EditorPartTestHelper;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import org.junit.Before;
 import org.junit.BeforeClass;
