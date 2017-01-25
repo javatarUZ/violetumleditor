@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
 /**
- * A property editor for the MultiLineText type.
+ * A property editor for the SingleLineText type.
  */
 public class SingleLineTextEditor extends LineTextEditor
 {
