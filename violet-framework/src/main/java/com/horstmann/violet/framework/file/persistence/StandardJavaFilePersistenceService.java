@@ -28,7 +28,6 @@ import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.AbstractNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.property.ArrowheadChoiceList;
-import com.horstmann.violet.product.diagram.common.node.ImageNode;
 
 /**
  * Standard Java implementation of IFilePersistenceService
@@ -223,44 +222,5 @@ public class StandardJavaFilePersistenceService implements IFilePersistenceServi
                 }
             }
         });
-//        encoder.setPersistenceDelegate(AbstractEdge.class, new DefaultPersistenceDelegate()
-//        {
-//            protected void initialize(Class<?> type, Object oldInstance, Object newInstance, Encoder out)
-//            {
-//                super.initialize(type, oldInstance, newInstance, out);
-//                IEdge e = (IEdge) oldInstance;
-//                out.writeStatement(new Statement(oldInstance, "connect", new Object[]
-//                {
-//                        e.getStartNode(),
-//                        e.getEndNode()
-//                }));
-//            }
-//        });
-        encoder.setPersistenceDelegate(ImageNode.class, new DefaultPersistenceDelegate()
-        {
-            protected void initialize(Class<?> type, Object oldInstance, Object newInstance, Encoder out)
-            {
-                super.initialize(type, oldInstance, newInstance, out);
-                ImageNode n = (ImageNode) oldInstance;
-                try
-                {
-                    String imageContent = n.getImageContent();
-                    int width = n.getImageWidth();
-                    int height = n.getImageHeight();
-                    out.writeStatement(new Statement(oldInstance, "setImageContent", new Object[]
-                    {
-                            imageContent,
-                            width,
-                            height
-                    }));
-                }
-                catch (InterruptedException e)
-                {
-                    throw new RuntimeException("Error while serializing ImageNode", e);
-                }
-            }
-        });
-    }
-    
-
+        } 
 }
