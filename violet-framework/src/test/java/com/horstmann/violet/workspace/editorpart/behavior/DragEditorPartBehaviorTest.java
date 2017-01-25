@@ -28,7 +28,7 @@ public class DragEditorPartBehaviorTest
     @BeforeClass
     public static void beforeClass()
     {
-        final Workspace workspace = EditorPartBehaviorTestHelper.initWorkspace();
+        final Workspace workspace = DragEditorPartBehaviorTestHelper.initWorkspace();
         final WorkspacePanel workspacePanel = workspace.getAWTComponent();
         final JScrollPane scrollPane = workspacePanel.getScrollableEditorPart();
         final JViewport viewport = new JViewport();
@@ -43,8 +43,8 @@ public class DragEditorPartBehaviorTest
     @Before
     public void before()
     {
-        EditorPartBehaviorTestHelper.resetScrollBarState(horizontalScrollBar);
-        EditorPartBehaviorTestHelper.resetScrollBarState(verticalScrollBar);
+        DragEditorPartBehaviorTestHelper.resetScrollBarState(horizontalScrollBar);
+        DragEditorPartBehaviorTestHelper.resetScrollBarState(verticalScrollBar);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DragEditorPartBehaviorTest
         final int transition = 20;
 
         //when
-        final MouseEvent mouseEvent = EditorPartBehaviorTestHelper.createMiddleMouseEvent(100, 100);
+        final MouseEvent mouseEvent = DragEditorPartBehaviorTestHelper.createMiddleMouseEvent(100, 100);
 
         when(mouseEvent.getLocationOnScreen()).thenReturn(new Point(mouseX, mouseY));
         behaviorManager.fireOnMousePressed(mouseEvent);

@@ -21,115 +21,115 @@ public interface IEditorPartBehavior
      * Action performed when mouse is pressed.
      * @param event mouse event.
      */
-    public void onMousePressed(MouseEvent event);
+    void onMousePressed(MouseEvent event);
 
     /**
      * Action performed when mouse is dragged (pressed and moved).
      * @param event mouse event.
      */
-    public void onMouseDragged(MouseEvent event);
+    void onMouseDragged(MouseEvent event);
 
     /**
      * Action performed when mouse is released.
      * @param event mouse event.
      */
-    public void onMouseReleased(MouseEvent event);
+    void onMouseReleased(MouseEvent event);
 
     /**
      * Action performed when mouse is clicked (pressed and released).
      * @param event mouse event.
      */
-    public void onMouseClicked(MouseEvent event);
+    void onMouseClicked(MouseEvent event);
 
     /**
      * Action performed when mouse is moved.
      * @param event mouse event.
      */
-    public void onMouseMoved(MouseEvent event);
+    void onMouseMoved(MouseEvent event);
 
     /**
      * Action performed when mouse wheel is rotated.
      * @param event mouse wheel event.
      */
-    public void onMouseWheelMoved(MouseWheelEvent event);
+    void onMouseWheelMoved(MouseWheelEvent event);
 
     /**
      * Action performed when specified tool is selected.
      * @param selectedTool selected graph tool.
      */
-    public void onToolSelected(GraphTool selectedTool);
+    void onToolSelected(GraphTool selectedTool);
 
     /**
      * Action performed when specified node is selected.
      * @param node selected node.
      */
-    public void onNodeSelected(INode node);
+    void onNodeSelected(INode node);
 
     /**
      * Action performed when specified edge is selected.
      * @param edge selected edge.
      */
-    public void onEdgeSelected(IEdge edge);
+    void onEdgeSelected(IEdge edge);
 
     /**
      * Action performed before editing specified node.
      * @param node edited node.
      */
-    public void beforeEditingNode(INode node);
+    void beforeEditingNode(INode node);
 
     /**
      * Action performed while editing specified node.
      * @param node edited node.
      */
-    public void whileEditingNode(INode node, PropertyChangeEvent event);
+    void whileEditingNode(INode node, PropertyChangeEvent event);
 
     /**
      * Action performed after editing specified node.
      * @param node edited node.
      */
-    public void afterEditingNode(INode node);
+    void afterEditingNode(INode node);
 
     /**
      * Action performed before editing specified edge.
      * @param edge edited edge.
      */
-    public void beforeEditingEdge(IEdge edge);
+    void beforeEditingEdge(IEdge edge);
 
     /**
      * Action performed while editing specified edge.
      * @param edge edited edge.
      */
-    public void whileEditingEdge(IEdge edge, PropertyChangeEvent event);
+    void whileEditingEdge(IEdge edge, PropertyChangeEvent event);
 
     /**
      * Action performed after editing specified edge.
      * @param edge edited edge.
      */
-    public void afterEditingEdge(IEdge edge);
+    void afterEditingEdge(IEdge edge);
 
     /**
      * Action performed before selected elements are removed.
      */
-    public void beforeRemovingSelectedElements();
+    void beforeRemovingSelectedElements();
 
     /**
      * Action performed after selected elements are removed.
      */
-    public void afterRemovingSelectedElements();
+    void afterRemovingSelectedElements();
 
     /**
      * Action performed before specified node is added.
      * @param node added node.
      * @param location location of added node.
      */
-    public void beforeAddingNodeAtPoint(INode node, Point2D location);
+    void beforeAddingNodeAtPoint(INode node, Point2D location);
 
     /**
      * Action performed after specified node is added.
      * @param node added node.
      * @param location location of added node.
      */
-    public void afterAddingNodeAtPoint(INode node, Point2D location);
+    void afterAddingNodeAtPoint(INode node, Point2D location);
 
     /**
      * Action performed before specified edge is added.
@@ -137,7 +137,7 @@ public interface IEditorPartBehavior
      * @param startPoint start edge point.
      * @param endPoint end edge point.
      */
-    public void beforeAddingEdgeAtPoints(IEdge edge, Point2D startPoint, Point2D endPoint);
+    void beforeAddingEdgeAtPoints(IEdge edge, Point2D startPoint, Point2D endPoint);
 
     /**
      * Action performed after specified edge is added.
@@ -145,36 +145,36 @@ public interface IEditorPartBehavior
      * @param startPoint start edge point.
      * @param endPoint end edge point.
      */
-    public void afterAddingEdgeAtPoints(IEdge edge, Point2D startPoint, Point2D endPoint);
+    void afterAddingEdgeAtPoints(IEdge edge, Point2D startPoint, Point2D endPoint);
 
     /**
      * Action performed before transition points on the edge are changed.
      * @param edge edge which points are changed.
      */
-    public void beforeChangingTransitionPointsOnEdge(IEdge edge);
+    void beforeChangingTransitionPointsOnEdge(IEdge edge);
 
     /**
      * Action performed after transition points on the edge are changed.
      * @param edge edge which points are changed.
      */
-    public void afterChangingTransitionPointsOnEdge(IEdge edge);
+    void afterChangingTransitionPointsOnEdge(IEdge edge);
 
     /**
      * Action performed before color of element is changed.
      * @param element colored element.
      */
-    public void beforeChangingColorOnElement(IColorable element);
+    void beforeChangingColorOnElement(IColorable element);
 
     /**
      * Action performed after color of element is changed.
      * @param element colored element.
      */
-    public void afterChangingColorOnElement(IColorable element);
+    void afterChangingColorOnElement(IColorable element);
 
     /**
      * Action performed when specified graphic is painted.
      * @param g2 painted graphic.
      */
-    public void onPaint(Graphics2D g2);
+    void onPaint(Graphics2D g2);
     
 }

@@ -23,12 +23,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Contains common behavior test operations Helps with writing shorter tests.
+ * Contains common behavior test operations, helps with writing shorter tests.
  */
-final class EditorPartBehaviorTestHelper
+final class DragEditorPartBehaviorTestHelper
 {
 
-    private EditorPartBehaviorTestHelper(){
+    private DragEditorPartBehaviorTestHelper(){
 
     }
 
