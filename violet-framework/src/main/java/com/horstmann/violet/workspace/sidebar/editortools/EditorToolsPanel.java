@@ -52,14 +52,14 @@ public class EditorToolsPanel extends JPanel implements ISideBarElement
         {
             public void actionPerformed(ActionEvent e)
             {
-                workspace.getEditorPart().changeZoom(1);
+                workspace.getEditorPart().zoomIn();
             }
         });
         this.bZoomOut.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                workspace.getEditorPart().changeZoom(-1);
+                workspace.getEditorPart().zoomOut();
             }
         });
         this.bUndo.addActionListener(new ActionListener()
