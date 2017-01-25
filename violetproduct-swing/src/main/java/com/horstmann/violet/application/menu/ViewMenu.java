@@ -48,12 +48,13 @@ import com.horstmann.violet.framework.theme.ThemeManager;
 import com.horstmann.violet.framework.util.ResourceManager;
 import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
+import com.horstmann.violet.workspace.editorpart.behavior.SwingRepaintingBehavior;
 
 /**
  * View menu
- * 
+ *
  * @author Alexandre de Pellegrin
- * 
+ *
  */
 @ResourceBundleBean(resourceReference = MenuFactory.class)
 public class ViewMenu extends JMenu
@@ -61,10 +62,10 @@ public class ViewMenu extends JMenu
 
     /**
      * Default constructor
-     * 
+     *
      * @param mainFrame where this menu is attached
      */
-@ResourceBundleBean(key = "view")
+    @ResourceBundleBean(key = "view")
     public ViewMenu(MainFrame mainFrame)
     {
         BeanInjector.getInjector().inject(this);
@@ -145,47 +146,18 @@ public class ViewMenu extends JMenu
         {
             public void menuSelected(MenuEvent event)
             {
-                if (mainFrame.getWorkspaceList().size() == 0) return;
-                IWorkspace activeWorkspace = mainFrame.getActiveWorkspace();
-                IEditorPart activeEditor = activeWorkspace.getEditorPart();
-                hideGridItem.setSelected(!activeEditor.getGrid().isVisible());
-            }
 
+                performOnClickMenuThemeHide();
+            }
             public void menuDeselected(MenuEvent event)
             {
             }
-
             public void menuCanceled(MenuEvent event)
             {
             }
         });
 
-        ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
-        String preferedLafName = this.themeManager.getPreferedLookAndFeel();
-        List<ITheme> themes = this.themeManager.getInstalledThemes();
-        for (ITheme aTheme : themes)
-        {
-            ThemeInfo themeInfo = aTheme.getThemeInfo();
-        	String themeName = themeInfo.getName();
-            final String themeClassName = themeInfo.getThemeClass().getName();
-            JMenuItem lafMenu = new JCheckBoxMenuItem(themeName);
-
-            lafMenu.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    performChangeLookAndFeel(themeClassName);
-                }
-            });
-
-            changeLookAndFeelMenu.add(lafMenu);
-            lookAndFeelButtonGroup.add(lafMenu);
-            if (themeClassName.equals(preferedLafName))
-            {
-                lafMenu.setSelected(true);
-            }
-
-        }
+        performThemeMenu();
         this.add(changeLookAndFeelMenu);
 
         performButtonGroup();
@@ -228,6 +200,7 @@ public class ViewMenu extends JMenu
 
     }
 
+
     /**
      * Performs zoom out action
      */
@@ -236,6 +209,7 @@ public class ViewMenu extends JMenu
         if (mainFrame.getWorkspaceList().size() == 0) return;
         IWorkspace workspace = mainFrame.getActiveWorkspace();
         workspace.getEditorPart().changeZoom(-1);
+
     }
 
     /**
@@ -249,7 +223,7 @@ public class ViewMenu extends JMenu
     }
 
     /**
-     * Performs gros drawing area action
+     * Performs grow drawing area action
      */
     private void performGrowDrawingArea()
     {
@@ -295,7 +269,7 @@ public class ViewMenu extends JMenu
 
     /**
      * Performs hist grid action
-     * 
+     *
      * @param event that handle the checkbox menu item to know if the hide sould be shown or not
      */
     private void performHideGrid(ActionEvent event)
@@ -316,8 +290,53 @@ public class ViewMenu extends JMenu
     }
 
     /**
+     *  Perform hide of menu
+     *
+     */
+    private void performOnClickMenuThemeHide(){
+        if (mainFrame.getWorkspaceList().size() == 0) return;
+        IWorkspace activeWorkspace = mainFrame.getActiveWorkspace();
+        IEditorPart activeEditor = activeWorkspace.getEditorPart();
+        hideGridItem.setSelected(!activeEditor.getGrid().isVisible());
+    }
+
+
+    /**
+     *  Perform theme menu
+     */
+    private void performThemeMenu() {
+        ButtonGroup lookAndFeelButtonGroup = new ButtonGroup();
+        String preferedLafName = this.themeManager.getPreferedLookAndFeel();
+        List<ITheme> themes = this.themeManager.getInstalledThemes();
+        for (ITheme aTheme : themes)
+        {
+            ThemeInfo themeInfo = aTheme.getThemeInfo();
+            String themeName = themeInfo.getName();
+            final String themeClassName = themeInfo.getThemeClass().getName();
+            JMenuItem lafMenu = new JCheckBoxMenuItem(themeName);
+
+            lafMenu.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    performChangeLookAndFeel(themeClassName);
+                }
+            });
+
+            changeLookAndFeelMenu.add(lafMenu);
+            lookAndFeelButtonGroup.add(lafMenu);
+
+            if (themeClassName.equals(preferedLafName))
+            {
+                lafMenu.setSelected(true);
+            }
+
+        }
+    }
+
+    /**
      * Performs look and feel change
-     * 
+     *
      * @param className look and feel or pgs theme class name
      */
     private void performChangeLookAndFeel(String className)
@@ -346,30 +365,35 @@ public class ViewMenu extends JMenu
     /**
      * Performs change language
      *
+     * @param localeLanguage
+     * @param localeCountry
+     * @param bundle
      */
-    private void performLanguage(String country,String region,String bundle){
+    private void performLanguage(String localeLanguage,String localeCountry,String bundle){
         if (mainFrame.getWorkspaceList().size() == 0) return;
         IWorkspace workspace = mainFrame.getActiveWorkspace();
         IEditorPart editorPart = workspace.getEditorPart();
-        performLocale(country,region,bundle);
+        performLocale(localeLanguage,localeCountry,bundle);
         editorPart.getSwingComponent().repaint();
-        mainFrame.repaint();
-    }
 
+    }
 
 
     /**
      * Performs locale set
-     * @param country
-     * @param region
+     *
+     * @param localeLanguage
+     * @param localeCountry
      * @param bundle
      */
-    private void performLocale(String country,String region,String bundle){
-        Locale locale = new Locale(country,region);
+    private void performLocale(String localeLanguage,String localeCountry,String bundle){
+        Locale locale = new Locale(localeLanguage,localeCountry);
         setDefaultLocale(locale);
         ResourceBundle.clearCache();
-        ResourceBundle resourceBundle= ResourceBundle.getBundle(bundle,new Locale("fr","FR"));
+        ResourceBundle resourceBundle= ResourceBundle.getBundle(bundle,locale);
+        BeanInjector.getInjector().inject(resourceBundle);
         ResourceBundleInjector.getInjector().inject(resourceBundle);
+
     }
 
 
@@ -422,10 +446,10 @@ public class ViewMenu extends JMenu
 
     @ResourceBundleBean(key = "dialog.change_laf.icon")
     private ImageIcon changeLAFDialogIcon;
-    
+
     @InjectedBean
     private DialogFactory dialogFactory;
-    
+
     @InjectedBean
     private ThemeManager themeManager;
 
