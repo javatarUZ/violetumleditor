@@ -36,7 +36,7 @@ public class BallAndSocketNode extends ColorableNode
         public Shape createShape(double contentWidth, double contentHeight)
         {
             int angle = orientation.getSelectedValue();
-            return new Arc2D.Double(0, 0, DEFAULT_DIAMETER, DEFAULT_DIAMETER, angle, DirectionSouth, Arc2D.OPEN);
+            return new Arc2D.Double(0, 0, DEFAULT_DIAMETER, DEFAULT_DIAMETER, angle, DIRECTION_SOUTH, Arc2D.OPEN);
         }
     }
 
@@ -51,8 +51,8 @@ public class BallAndSocketNode extends ColorableNode
         type = new TextChoiceList<Types>(TYPE_KEYS, TYPE_VALUES);
         orientation = new TextChoiceList<Integer>(ORIENTATION_KEYS, ORIENTATION_VALUES);
 
-        this.selectedType = this.type.getSelectedPos();
-        this.selectedOrientation = this.orientation.getSelectedPos();
+        selectedType = type.getSelectedPos();
+        selectedOrientation = orientation.getSelectedPos();
     }
 
     /**
@@ -69,8 +69,8 @@ public class BallAndSocketNode extends ColorableNode
         orientation = node.orientation.clone();
         name.setPadding(5, 5, 5, 5);
 
-        this.selectedType = this.type.getSelectedPos();
-        this.selectedOrientation = this.orientation.getSelectedPos();
+        selectedType = type.getSelectedPos();
+        selectedOrientation = orientation.getSelectedPos();
 
         createContentStructure();
     }
@@ -173,10 +173,11 @@ public class BallAndSocketNode extends ColorableNode
         int orientationAngle = orientation.getSelectedValue();
         int directionAngle = getDirectionAngle(direction);
 
-        boolean isSupportedDirection = (Types.BALL_AND_SOCKET == type && (directionAngle + DirectionSouth) % 360 == orientationAngle);
+        boolean isSupportedDirection = (Types.BALL_AND_SOCKET == type &&
+                (directionAngle + DIRECTION_SOUTH) % 360 == orientationAngle);
         if (isSupportedDirection)
         {
-            orientationAngle += DirectionSouth;
+            orientationAngle += DIRECTION_SOUTH;
         }
 
         if (Types.SOCKET == type || isSupportedDirection)
@@ -201,32 +202,32 @@ public class BallAndSocketNode extends ColorableNode
     {
         if (Direction.SOUTH.equals(direction))
         {
-            return DirectionSouth;
+            return DIRECTION_SOUTH;
         }
         else if (Direction.WEST.equals(direction))
         {
-            return DirectionWest;
+            return DIRECTION_WEST;
         }
         else if (Direction.EAST.equals(direction))
         {
-            return DirectionEast;
+            return DIRECTION_EAST;
         }
 
-        return DirectionNorth;
+        return DIRECTION_NORTH;
     }
 
     private double getTopGap(int directionAngle)
     {
-        if (DirectionNorth == directionAngle)
+        if (DIRECTION_NORTH == directionAngle)
         {
             return -DEFAULT_GAP;
         }
-        else if (DirectionSouth == directionAngle)
+        else if (DIRECTION_SOUTH == directionAngle)
         {
             return DEFAULT_GAP;
         }
 
-        return DirectionNorth;
+        return DIRECTION_NORTH;
     }
 
     private void refreshBallAndSocketLayout()
@@ -291,7 +292,7 @@ public class BallAndSocketNode extends ColorableNode
     {
         if (this.type.setSelectedIndex(type.getSelectedPos()))
         {
-            this.selectedType = type.getSelectedPos();
+            selectedType = type.getSelectedPos();
             refreshBallAndSocketLayout();
         }
     }
@@ -317,7 +318,7 @@ public class BallAndSocketNode extends ColorableNode
     {
         if (this.orientation.setSelectedIndex(orientation.getSelectedPos()))
         {
-            this.selectedOrientation = orientation.getSelectedPos();
+            selectedOrientation = orientation.getSelectedPos();
             refreshBallAndSocketLayout();
         }
     }
@@ -345,13 +346,16 @@ public class BallAndSocketNode extends ColorableNode
      */
     private static final int DEFAULT_GAP = 5;
 
-    private static final int DirectionNorth = 0;
-    private static final int DirectionSouth = 180;
-    private static final int DirectionWest = 90;
-    private static final int DirectionEast = 270;
+    private static final int DIRECTION_NORTH = 0;
+    private static final int DIRECTION_SOUTH = 180;
+    private static final int DIRECTION_WEST = 90;
+    private static final int DIRECTION_EAST = 270;
 
     private static String[] ORIENTATION_KEYS = new String[] { "top", "bottom", "left", "right" };
-    private static final Integer[] ORIENTATION_VALUES = new Integer[] { DirectionNorth, DirectionSouth, DirectionEast, DirectionWest };
+    private static final Integer[] ORIENTATION_VALUES = new Integer[] {
+            DIRECTION_NORTH, DIRECTION_SOUTH,
+            DIRECTION_EAST, DIRECTION_WEST
+    };
     private static String[] TYPE_KEYS = new String[] { "ball_and_socket", "ball", "socket" };
     private static final Types[] TYPE_VALUES = new Types[] { Types.BALL_AND_SOCKET, Types.BALL, Types.SOCKET };
 
