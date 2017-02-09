@@ -37,6 +37,7 @@ import com.horstmann.violet.framework.injection.resources.ResourceBundleConstant
 import com.horstmann.violet.framework.theme.ThemeManager;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 import com.horstmann.violet.workspace.sidebar.colortools.ColorToolsBarPanel;
 
@@ -132,6 +133,21 @@ public class NoteNode extends ColorableNode
     public String getToolTip()
     {
         return ResourceBundleConstant.NODE_AND_EDGE_RESOURCE.getString("note_node.tooltip");
+    }
+
+    @Override
+    public LineText getName() {
+        return text;
+    }
+
+    @Override
+    public LineText getAttributes() {
+        return null;
+    }
+
+    @Override
+    public LineText getMethods() {
+        return null;
     }
 
     @Override
