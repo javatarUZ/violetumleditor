@@ -285,18 +285,6 @@ public class BallAndSocketNode extends ColorableNode
         return name;
     }
 
-    @Override
-    public LineText getAttributes()
-    {
-        return null;
-    }
-
-    @Override
-    public LineText getMethods()
-    {
-        return null;
-    }
-
     public ChoiceList getType()
     {
         return type;
@@ -309,6 +297,17 @@ public class BallAndSocketNode extends ColorableNode
             selectedType = type.getSelectedPos();
             refreshBallAndSocketLayout();
         }
+    }
+
+    @Override
+    public LineText getAttributes() {
+        return null;
+    }
+
+    @Override
+    public LineText getMethods() {
+        return null;
+
     }
 
     /**
