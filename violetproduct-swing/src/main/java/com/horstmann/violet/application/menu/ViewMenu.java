@@ -26,11 +26,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -156,50 +155,7 @@ public class ViewMenu extends JMenu
             {
             }
         });
-
         performThemeMenu();
-        this.add(changeLookAndFeelMenu);
-
-        performButtonGroup();
-
-        this.add(language);
-
-        languageEnglish.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performLocale("en","EN","MenuFactory");
-                mainFrame.repaint();
-            }
-        });
-        language.add(languageEnglish);
-
-        languageFrench.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performLocale("fr","FR","MenuFactory_fr");
-                mainFrame.repaint();
-            }
-        });
-        language.add(languageFrench);
-
-        languageGreman.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performLocale("de","DE","MenuFactory_de");
-                mainFrame.repaint();
-            }
-        });
-        language.add(languageGreman);
-
-        languagePolish.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performLocale("pl","PL","MenuFactory_pl");
-                mainFrame.repaint();
-            }
-        });
-        language.add(languagePolish);
-
 
     }
 
@@ -352,37 +308,6 @@ public class ViewMenu extends JMenu
 
     }
 
-    /**
-     * Performs creation of language button group
-     */
-    private void performButtonGroup(){
-        ButtonGroup langButtonGroup = new ButtonGroup();
-
-        langButtonGroup.add(languageEnglish);
-        langButtonGroup.add(languageFrench);
-        langButtonGroup.add(languageGreman);
-        langButtonGroup.add(languagePolish);
-    }
-
-
-    /**
-     * Performs locale set
-     *
-     * @param localeLanguage
-     * @param localeCountry
-     * @param bundle
-     */
-    private void performLocale(String localeLanguage,String localeCountry,String bundle){
-        Locale locale = new Locale(localeLanguage,localeCountry);;
-        setDefaultLocale(locale);
-        ResourceBundle.clearCache();
-        ResourceBundle resourceBundle= ResourceBundle.getBundle(bundle,locale);
-        BeanInjector.getInjector().inject(resourceBundle);
-        ResourceBundleInjector.getInjector().inject(resourceBundle);
-
-    }
-
-
     private MainFrame mainFrame;
 
     @ResourceBundleBean(key = "view.zoom_out")
@@ -403,26 +328,11 @@ public class ViewMenu extends JMenu
     @ResourceBundleBean(key = "view.larger_grid")
     private JMenuItem largerGrid;
 
-    @ResourceBundleBean(key = "view.languageEnglish")
-    private JCheckBoxMenuItem languageEnglish;
-
-    @ResourceBundleBean(key = "view.languagePolish")
-    private JCheckBoxMenuItem languagePolish;
-
-    @ResourceBundleBean(key = "view.languageFrench")
-    private JCheckBoxMenuItem languageFrench;
-
-    @ResourceBundleBean(key = "view.languageGerman")
-    private JCheckBoxMenuItem languageGreman;
-
     @ResourceBundleBean(key = "view.hide_grid")
     private JCheckBoxMenuItem hideGridItem;
 
     @ResourceBundleBean(key = "view.change_laf")
     private JMenu changeLookAndFeelMenu;
-
-    @ResourceBundleBean(key = "view.language")
-    private JMenu language;
 
     @ResourceBundleBean(key = "dialog.change_laf.title")
     private String changeLAFDialogTitle;
