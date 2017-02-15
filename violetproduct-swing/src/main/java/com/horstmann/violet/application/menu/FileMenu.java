@@ -21,6 +21,7 @@
 
 package com.horstmann.violet.application.menu;
 
+import com.horstmann.violet.framework.file.AutoSaveRemover;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -401,7 +402,8 @@ public class FileMenu extends JMenu
                 if (workspace != null)
                 {
                     IGraphFile graphFile = workspace.getGraphFile();
-                    graphFile.removeBackup();
+                    AutoSaveRemover autoSaveRemover = new AutoSaveRemover();
+                    autoSaveRemover.removeBackup();
                     if (graphFile.isSaveRequired())
                     {
                         JOptionPane optionPane = new JOptionPane();

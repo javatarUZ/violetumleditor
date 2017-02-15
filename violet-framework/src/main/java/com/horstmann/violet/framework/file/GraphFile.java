@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -149,14 +148,6 @@ public class GraphFile implements IGraphFile {
     }
 
     @Override
-    public void removeBackup() {
-        final File autoSaveDirectory = new File(autoSaveDirectoryPath);
-        final List<File> autoSaveFiles = listFiles(autoSaveDirectory);
-        final List<Long> fileTimeCreation = filesCreationTime(autoSaveFiles);
-        deleteAutoSavedFiles(autoSaveDirectory, autoSaveFiles, fileTimeCreation);
-    }
-
-    @Override
     public void saveToNewLocation() {
         try {
             IFileWriter fileSaver = getFileSaver(true);
@@ -184,7 +175,7 @@ public class GraphFile implements IGraphFile {
      *
      * @param isAskedForNewLocation if true, then the FileChooser will open a dialog box to allow to choice a new
      * location
-     * @return f
+     * @return IFileSaver instance or null value
      */
     private IFileWriter getFileSaver(boolean isAskedForNewLocation) {
         try {
@@ -280,44 +271,6 @@ public class GraphFile implements IGraphFile {
         engine.start();
     }
 
-    private List<File> listFiles(final File autoSaveDirectory) {
-        final File[] listOfFiles = autoSaveDirectory.listFiles();
-        final List<File> listOfFilesFinal = new ArrayList<File>();
-
-        for (int index = 0; index < listOfFiles.length; index++) {
-            final File file = listOfFiles[index];
-            if (file.isFile()) {
-                listOfFilesFinal.add(file);
-            }
-        }
-        return listOfFilesFinal;
-    }
-
-    private List<Long> filesCreationTime(final List<File> autoSaveFiles) {
-        List<Long> creationTime = new ArrayList<Long>();
-        for (File savedFile : autoSaveFiles) {
-            final long lastModification = savedFile.lastModified();
-            if (!creationTime.contains(lastModification)) {
-                creationTime.add(lastModification);
-            }
-        }
-        Collections.sort(creationTime);
-        return creationTime;
-    }
-
-    private void deleteAutoSavedFiles(final File autoSaveDirectory, final List<File> autoSaveFiles,
-                                      final List<Long> fileTimeCreation) {
-        final Long directorySize = FileUtils.sizeOfDirectory(autoSaveDirectory);
-        while (maxSizeOfDirectory < directorySize && !fileTimeCreation.isEmpty()) {
-            for (final File saveFile : autoSaveFiles) {
-                if (saveFile.lastModified() == fileTimeCreation.get(0)) {
-                    saveFile.delete();
-                }
-            }
-            fileTimeCreation.remove(0);
-        }
-    }
-
     private IGraph graph;
 
     /**
@@ -373,6 +326,4 @@ public class GraphFile implements IGraphFile {
     private File autoSaveFile;
 
     private final String autoSaveDirectoryPath = System.getProperty("user.home") + File.separator + "VioletUML";
-
-    private final Long maxSizeOfDirectory = Long.valueOf(100000000);
 }

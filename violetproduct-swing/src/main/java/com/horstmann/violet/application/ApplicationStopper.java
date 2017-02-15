@@ -1,5 +1,6 @@
 package com.horstmann.violet.application;
 
+import com.horstmann.violet.framework.file.AutoSaveRemover;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,8 @@ public class ApplicationStopper {
     public void exitProgram(MainFrame mainFrame) {
         boolean ok = isItReadyToExit(mainFrame);
         if (ok) {
-            for (IWorkspace workspace : mainFrame.getWorkspaceList()) {
-                workspace.getGraphFile().removeBackup();
-            }
+            AutoSaveRemover autoSaveRemover = new AutoSaveRemover();
+            autoSaveRemover.removeBackup();
             System.exit(0);
         }
     }
