@@ -99,8 +99,9 @@ public class MainFrame extends JFrame {
         initTabbedPane();
         final Component component = workspace.getAWTComponent();
         this.tabbedPane.addTab(title, component);
-        final int index = tabbedPane.indexOfComponent(component);
-        tabbedPane.setTabComponentAt(index, new CloseableTabComponent(tabbedPane));
+        final int newTabIndex = tabbedPane.indexOfComponent(component);
+        tabbedPane.setTabComponentAt(newTabIndex, new CloseableTabComponent(tabbedPane));
+        tabbedPane.setSelectedIndex(newTabIndex);
         tabbedPane.revalidate();
         tabbedPane.repaint();
     }
