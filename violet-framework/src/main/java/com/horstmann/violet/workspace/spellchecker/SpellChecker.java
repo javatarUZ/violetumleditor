@@ -17,15 +17,20 @@ public class SpellChecker {
     private SpellChecker(){}
 
     public static boolean isCorrectWord(final String word) throws IOException {
+
         JLanguageTool langTool = new JLanguageTool(new BritishEnglish());
+        disableUselessRules(langTool);
+        List<RuleMatch> matches = langTool.check(word);
+        int numberOfErrors = matches.size();
+        return numberOfErrors == 0;
+    }
+
+    private static void disableUselessRules(final JLanguageTool langTool) {
+
         for (Rule rule : langTool.getAllRules()) {
             if (!rule.isDictionaryBasedSpellingRule()) {
                 langTool.disableRule(rule.getId());
             }
         }
-
-        List<RuleMatch> matches = langTool.check(word);
-        int numberOfErrors = matches.size();
-        return numberOfErrors == 0;
     }
 }

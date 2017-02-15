@@ -177,7 +177,7 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
     private void checkCorrectnessOfString(final INodeName edited) {
         try {
             String nodeName = edited.getName().getText();
-            String[] splitNameByUpperCase = getSplitNodeName(nodeName);
+            String[] splitNameByUpperCase = getClearNodeName(nodeName);
             for(String word : splitNameByUpperCase) {
                 boolean correctWord = SpellChecker.isCorrectWord(word);
                 if (!correctWord){
@@ -191,12 +191,22 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
         }
     }
 
+    /**
+     * Its returns node name without html tags
+     *
+     * @param nodeName with html tags
+     * @return clear node name without html tags
+     */
     @NotNull
-    private String[] getSplitNodeName(String nodeName) {
+    private String[] getClearNodeName(String nodeName) {
+
+        final String regexSplitByUpperCase = "(?=\\p{Lu})";
+
         nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
         nodeName = nodeName.replaceAll("<html><center>«interface»</center> <font size=\\+1>", "");
         nodeName = nodeName.replaceAll("<html><center>«enumeration»</center> <font size=\\+1>", "");
-        return nodeName.split("(?=\\p{Lu})");
+
+        return nodeName.split(regexSplitByUpperCase);
     }
 
     private IEditorPartSelectionHandler selectionHandler;
