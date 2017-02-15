@@ -79,10 +79,10 @@ public abstract class BeanInfo extends SimpleBeanInfo
             propertyDescriptor.setValue("priority", new Integer(priority));
 
         }
-        catch (IntrospectionException e)
+        catch (IntrospectionException exception)
         {   
             MessageFormat messageFormatter = new MessageFormat(CREATE_PROPERTY_DESCRIPTOR_FAIL_MESSAGE_FORMAT);
-            String message = messageFormatter.format(new Object[]{valueName,resourceKey,e.getMessage()});
+            String message = messageFormatter.format(new Object[]{valueName,resourceKey,exception.getMessage()});
             LOGGER.log(Level.WARNING, message);
         }
         return propertyDescriptor;
