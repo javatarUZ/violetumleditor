@@ -59,33 +59,28 @@ import javax.swing.JFrame;
 /**
  * A program for editing UML diagrams.
  */
-public class UMLEditorApplication
-{
+public class UMLEditorApplication {
 
     /**
      * Standalone application entry point
      *
      * @param args (could contains file to open)
      */
-    public static void main(final String[] args)
-    {
-        for (int i = 0; i < args.length; i++)
-        {
+    public static void main(final String[] args) {
+        for (int i = 0; i < args.length; i++) {
             final String arg = args[i];
-            if ("-reset".equals(arg))
-            {
+            if ("-reset".equals(arg)) {
                 initBeanFactory();
-                final UserPreferencesService service = BeanFactory.getFactory().getBean(UserPreferencesService.class);
+                final UserPreferencesService service = BeanFactory.getFactory()
+                        .getBean(UserPreferencesService.class);
                 service.reset();
                 System.out.println("User preferences reset done.");
             }
-            if ("-english".equals(arg))
-            {
+            if ("-english".equals(arg)) {
                 Locale.setDefault(Locale.ENGLISH);
                 System.out.println("Language forced to english.");
             }
-            if ("-help".equals(arg) || "-?".equals(arg))
-            {
+            if ("-help".equals(arg) || "-?".equals(arg)) {
                 System.out.println("Violet UML Editor command line help. Options are :");
                 System.out.println("-reset to reset user preferences,");
                 System.out.println("-english to force language to english.");
@@ -97,11 +92,8 @@ public class UMLEditorApplication
 
     /**
      * Default constructor
-     *
-     * @param filesToOpen
      */
-    private UMLEditorApplication(final String[] filesToOpen)
-    {
+    private UMLEditorApplication(final String[] filesToOpen) {
         initBeanFactory();
         BeanInjector.getInjector().inject(this);
         createDefaultWorkspace(filesToOpen);
@@ -137,7 +129,6 @@ public class UMLEditorApplication
     }
 
 
-
     /**
      * Creates workspace when application works as a standalone one. It contains :<br>
      * + plugins loading + GUI theme management + a spash screen<br>
@@ -145,8 +136,7 @@ public class UMLEditorApplication
      * + command line args<br>
      * + last workspace restore<br>
      */
-    private void createDefaultWorkspace(final String[] filesToOpen)
-    {
+    private void createDefaultWorkspace(final String[] filesToOpen) {
         installPlugins();
         final SplashScreen splashScreen = new SplashScreen();
         splashScreen.setVisible(true);
@@ -156,40 +146,35 @@ public class UMLEditorApplication
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         SplashScreen.displayOverEditor(mainFrame, 1000);
         final List<IFile> fullList = new ArrayList<IFile>();
-        final List<IFile> lastSessionFiles = this.userPreferencesService.getOpenedFilesDuringLastSession();
+        final List<IFile> lastSessionFiles = this.userPreferencesService
+                .getOpenedFilesDuringLastSession();
         fullList.addAll(lastSessionFiles);
-        for (final String aFileToOpen : filesToOpen)
-        {
-            try
-            {
+        for (final String aFileToOpen : filesToOpen) {
+            try {
                 final LocalFile localFile = new LocalFile(new File(aFileToOpen));
                 fullList.add(localFile);
-            }
-            catch (final IOException e)
-            {
+            } catch (final IOException e) {
                 // There's nothing to do. We're starting the program
                 // Some logs should be nive
                 e.printStackTrace();
             }
         }
         // Open files
-        for (final IFile aFile : lastSessionFiles)
-        {
-            try
-            {
+        for (final IFile aFile : lastSessionFiles) {
+            try {
                 final IGraphFile graphFile = new GraphFile(aFile);
                 final IWorkspace workspace = new Workspace(graphFile);
                 mainFrame.addWorkspace(workspace);
-            }
-            catch (final Exception e)
-            {
-                System.err.println("Unable to open file " + aFile.getFilename() + "from location " + aFile.getDirectory());
+            } catch (final Exception e) {
+                System.err.println(
+                        "Unable to open file " + aFile.getFilename() + "from location " + aFile
+                                .getDirectory());
                 userPreferencesService.removeOpenedFile(aFile);
                 System.err.println("Removed from user preferences!");
             }
         }
         final IFile activeFile = this.userPreferencesService.getActiveDiagramFile();
-        mainFrame.setActiveWorkspace(activeFile);
+        mainFrame.openActiveWorkspace(activeFile);
         mainFrame.setVisible(true);
         splashScreen.setVisible(false);
         splashScreen.dispose();
@@ -198,8 +183,7 @@ public class UMLEditorApplication
     /**
      * Install plugins
      */
-    private void installPlugins()
-    {
+    private void installPlugins() {
 
         this.pluginLoader.installPlugins();
     }
