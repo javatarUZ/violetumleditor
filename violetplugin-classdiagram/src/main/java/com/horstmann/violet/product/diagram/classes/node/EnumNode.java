@@ -11,16 +11,22 @@ import com.horstmann.violet.product.diagram.abstracts.node.INodeName;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
 import com.horstmann.violet.product.diagram.common.node.ColorableNode;
+import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
 import com.horstmann.violet.product.diagram.property.text.decorator.LargeSizeDecorator;
 import com.horstmann.violet.product.diagram.property.text.decorator.OneLineText;
 import com.horstmann.violet.product.diagram.property.text.decorator.PrefixDecorator;
+
 import com.horstmann.violet.product.diagram.property.text.decorator.ReplaceSentenceDecorator;
 import java.awt.Color;
+import java.awt.*;
 
-public class EnumNode extends ColorableNode implements INodeName
+/**
+ * A class node in a class diagram.
+ */
+public class EnumNode extends ColorableNode implements INamedNode, INodeName
 {
 
     private SingleLineText name;
@@ -142,26 +148,32 @@ public class EnumNode extends ColorableNode implements INodeName
         return name;
     }
 
-    public void setAttributes(final LineText newValue)
+    public void setAttributes(final MultiLineText newValue)
     {
         if(newValue != null) {
             attributes.setText(newValue);
         }
     }
 
+    /**
+     * Gets the attributes property value.
+     *
+     * @return the attributes of this class
+     */
     public MultiLineText getAttributes()
     {
         return attributes;
     }
 
-    public void setMethods(final LineText newValue)
+    public void setMethods(final MultiLineText newValue)
     {
         if( newValue != null) {
             methods.setText(newValue);
         }
     }
 
-    public LineText getMethods()
+    @Override
+    public MultiLineText getMethods()
     {
         return methods;
     }
@@ -175,7 +187,8 @@ public class EnumNode extends ColorableNode implements INodeName
         { "property ", "/ " }
     };
 
-    private static final LineText.Converter NAME_CONVERTER = new LineText.Converter()
+
+    private static final LineText.Converter NAME_CONVERTER = text -> new PrefixDecorator( new LargeSizeDecorator(new OneLineText(text)), "<center>«enumeration»</center>");
     {
         @Override
         public OneLineText toLineString(String text)
@@ -201,3 +214,4 @@ public class EnumNode extends ColorableNode implements INodeName
         }
     };
 }
+
