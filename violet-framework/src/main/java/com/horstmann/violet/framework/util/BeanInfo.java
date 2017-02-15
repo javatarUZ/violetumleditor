@@ -88,7 +88,7 @@ public abstract class BeanInfo extends SimpleBeanInfo
         return propertyDescriptor;
     }
 
-	private static final Logger LOGGER = Logger.getLogger(BeanInfo.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BeanInfo.class.getName());
     private ResourceManager resourceManager;
     private final Class<?> beanClass;
     private final String CREATE_PROPERTY_DESCRIPTOR_FAIL_MESSAGE_FORMAT = "Create property descriptor fail valueName: {0} resourceKey: {1}\nIntrospectionException:{2}";
