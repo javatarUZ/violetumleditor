@@ -315,6 +315,7 @@ public class MainFrame extends JFrame
                     dialogFactory.showErrorDialog(e.getMessage());
                 }
             }
+
         });
     }
 
@@ -339,8 +340,8 @@ public class MainFrame extends JFrame
     public void addWorkspace(final IWorkspace newWorkspace)
     {
         workspaceList.add(newWorkspace);
-        setActiveWorkspace(newWorkspace);
         addCloseableTab(newWorkspace.getTitle(), newWorkspace);
+        setActiveWorkspace(newWorkspace);
     }
 
     /**
@@ -391,6 +392,7 @@ public class MainFrame extends JFrame
             menuFactory.getDocumentMenu(this).updateMenuItem();
             setTitle(workspace.getTitle());
             this.activeWorkspace = workspace;
+            tabbedPane.setSelectedComponent(workspace.getAWTComponent());
         }
     }
 
