@@ -30,7 +30,7 @@ public class TabFinalizer {
     }
 
     /**
-     * Invokes tab finalization and return if the tab is ready to close.
+     * Perform tab finalization and return if the tab is ready to close.
      *
      * @param workspace workspace of a tab that should be finalized
      * @return true if the tab is ready to close.
@@ -38,19 +38,22 @@ public class TabFinalizer {
     public boolean isReadyToClose(final IWorkspace workspace)
     {
         final IGraphFile currentGraphFile = workspace.getGraphFile();
-        final boolean readyToClose = finalizeTab(currentGraphFile);
-        return readyToClose;
+        final int userDecision = askUserForSaveFile();
+        return performUserOption(currentGraphFile, userDecision);
     }
 
     /**
-     * Perform finalization on current graph file.
+     * Create and show dialog window with question, if save file.
      *
-     * @param currentGraphFile file to close
-     * @return status, if ready to close
+     * @return User decision as int value
+     * @see JOptionPane
      */
-    private boolean finalizeTab(final IGraphFile currentGraphFile)
-    {
-            return performUserOption(currentGraphFile);
+    private int askUserForSaveFile() {
+        final JOptionPane optionPane = new JOptionPane(this.dialogExitMessage,
+                JOptionPane.CLOSED_OPTION, JOptionPane.YES_NO_CANCEL_OPTION, this.dialogExitIcon);
+        dialogFactory.showDialog(optionPane, this.dialogExitTitle, true);
+        final int decision = getOptionFromPane(optionPane);
+        return decision;
     }
 
     /**
@@ -70,39 +73,14 @@ public class TabFinalizer {
     }
 
     /**
-     * Creates and shows option panel with save file quesion.
-     *
-     * @return option panel
-     */
-    private JOptionPane createOptionPane()
-    {
-        final JOptionPane optionPane = new JOptionPane(this.dialogExitMessage,
-                JOptionPane.CLOSED_OPTION, JOptionPane.YES_NO_CANCEL_OPTION, this.dialogExitIcon);
-        dialogFactory.showDialog(optionPane, this.dialogExitTitle, true);
-        return optionPane;
-    }
-
-    /**
-     * Set active diagram in user preferences
-     */
-    private void setActiveDiagramPreference()
-    {
-        final IWorkspace activeWorkspace = mainFrame.getActiveWorkspace();
-        final IGraphFile activeWorkspaceGraphFile = activeWorkspace.getGraphFile();
-        this.userPreferencesService.setActiveDiagramFile(activeWorkspaceGraphFile);
-    }
-
-    /**
-     * Creates option panel. Performs operation depending on users decision
+     *  Performs operation depending on users decision
      *
      * @param currentFile current file
      * @return state if file ready to close
      */
-    private boolean performUserOption(final IGraphFile currentFile)
+    private boolean performUserOption(final IGraphFile currentFile, final int userDecision)
     {
-        final JOptionPane optionPane = createOptionPane();
-        final int option = getOptionFromPane(optionPane);
-        switch (option)
+        switch (userDecision)
         {
             case JOptionPane.CANCEL_OPTION:
                 return false;
@@ -116,6 +94,16 @@ public class TabFinalizer {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Set active diagram in user preferences
+     */
+    private void setActiveDiagramPreference()
+    {
+        final IWorkspace activeWorkspace = mainFrame.getActiveWorkspace();
+        final IGraphFile activeWorkspaceGraphFile = activeWorkspace.getGraphFile();
+        this.userPreferencesService.setActiveDiagramFile(activeWorkspaceGraphFile);
     }
 
     private final MainFrame mainFrame;
