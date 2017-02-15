@@ -80,8 +80,7 @@ public class MainFrame extends JFrame {
     /**
      * Constructs a blank frame with a tabbed panel.
      */
-    public MainFrame()
-    {
+    public MainFrame() {
         getContentPane().setLayout(new BorderLayout());
         BeanInjector.getInjector().inject(this);
         ResourceBundleInjector.getInjector().inject(this);
@@ -90,15 +89,14 @@ public class MainFrame extends JFrame {
         decorateFrame();
         setInitialSize();
         createMenuBar();
-        createTabbedPane();
         startAutoSave();
     }
 
     /**
      * Add tab with title and close button
      */
-    private void addCloseableTab(final String title, final IWorkspace workspace)
-    {
+    private void addCloseableTab(final String title, final IWorkspace workspace) {
+        initTabbedPane();
         final Component component = workspace.getAWTComponent();
         this.tabbedPane.addTab(title, component);
         final int index = tabbedPane.indexOfComponent(component);
@@ -110,12 +108,11 @@ public class MainFrame extends JFrame {
     /**
      * A class that represents tab component with title and close button.
      */
-    private class CloseableTabComponent extends JPanel
-    {
+    private class CloseableTabComponent extends JPanel {
+
         private final JTabbedPane tabbedPane;
 
-        CloseableTabComponent(final JTabbedPane tabbedPane)
-        {
+        CloseableTabComponent(final JTabbedPane tabbedPane) {
             super(new FlowLayout());
             this.tabbedPane = tabbedPane;
             setOpaque(true);
@@ -126,15 +123,13 @@ public class MainFrame extends JFrame {
         /**
          * Creates label with title from tabbed panel
          */
-        private JLabel createTabLabel()
-        {
-            final JLabel label = new JLabel()
-            {
-                public String getText()
-                {
-                    final int newTabIndex = tabbedPane.indexOfTabComponent(CloseableTabComponent.this);
-                    if (newTabIndex != -1)
-                    {
+        private JLabel createTabLabel() {
+            final JLabel label = new JLabel() {
+                @Override
+                public String getText() {
+                    final int newTabIndex = tabbedPane
+                            .indexOfTabComponent(CloseableTabComponent.this);
+                    if (newTabIndex != -1) {
                         return tabbedPane.getTitleAt(newTabIndex);
                     }
                     return null;
@@ -146,10 +141,9 @@ public class MainFrame extends JFrame {
         /**
          * A class that represents close button for tab
          */
-        private class CloseButton extends JButton
-        {
-            CloseButton()
-            {
+        private class CloseButton extends JButton {
+
+            CloseButton() {
                 this.setIcon(new ImageIcon(tabCloseImage));
                 this.setBorder(BorderFactory.createEmptyBorder());
                 setFocusPainted(false);
@@ -157,11 +151,10 @@ public class MainFrame extends JFrame {
                 addActionListener(new ButtonClickHandler());
             }
 
-            private class ButtonClickHandler implements ActionListener
-            {
+            private class ButtonClickHandler implements ActionListener {
+
                 @Override
-                public void actionPerformed(final ActionEvent e)
-                {
+                public void actionPerformed(final ActionEvent e) {
                     final int clickedTabIndex = tabbedPane
                             .indexOfTabComponent(CloseableTabComponent.this);
                     closeTab(clickedTabIndex);
@@ -175,11 +168,9 @@ public class MainFrame extends JFrame {
          * Close tab with specified index
          */
         private void closeTab(final int index) {
-            if (index != -1)
-            {
+            if (index != -1) {
                 final IWorkspace workspace = getWorkspaceAt(index);
-                if (tabFinalizer.isReadyToClose(workspace))
-                {
+                if (tabFinalizer.isReadyToClose(workspace)) {
                     removeWorkspace(workspace);
                     tabbedPane.removeTabAt(index);
                 }
@@ -187,14 +178,12 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class TabSwitchActionHandler implements ChangeListener
-    {
+    private class TabSwitchActionHandler implements ChangeListener {
+
         @Override
-        public void stateChanged(final ChangeEvent e)
-        {
+        public void stateChanged(final ChangeEvent e) {
             final int index = tabbedPane.getSelectedIndex();
-            if (index != -1)
-            {
+            if (index != -1) {
                 final IWorkspace workspace = getWorkspaceAt(index);
                 setActiveWorkspace(workspace);
             }
@@ -206,8 +195,7 @@ public class MainFrame extends JFrame {
     /**
      * Return workspace from tab with given index
      */
-    private IWorkspace getWorkspaceAt(final int index)
-    {
+    private IWorkspace getWorkspaceAt(final int index) {
         final Component component = tabbedPane.getComponentAt(index);
         final IWorkspace workspace = findWorkspaceByComponent(component);
         return workspace;
@@ -216,14 +204,10 @@ public class MainFrame extends JFrame {
     /**
      * Find workspace in workspace collection by specified component
      */
-    private IWorkspace findWorkspaceByComponent(final Component component)
-    {
-        if (component != null)
-        {
-            for (final IWorkspace workspace : workspaceList)
-            {
-                if (workspace.getAWTComponent().equals(component))
-                {
+    private IWorkspace findWorkspaceByComponent(final Component component) {
+        if (component != null) {
+            for (final IWorkspace workspace : workspaceList) {
+                if (workspace.getAWTComponent().equals(component)) {
                     return workspace;
                 }
             }
@@ -234,8 +218,7 @@ public class MainFrame extends JFrame {
     /**
      * Sets initial size on startup
      */
-    private void setInitialSize()
-    {
+    private void setInitialSize() {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         final int screenWidth = (int) screenSize.getWidth();
         final int screenHeight = (int) screenSize.getHeight();
@@ -248,8 +231,7 @@ public class MainFrame extends JFrame {
     /**
      * Set title and icon
      */
-    private void decorateFrame()
-    {
+    private void decorateFrame() {
         setTitle(this.applicationName);
         setIconImage(this.applicationIcon);
     }
@@ -257,8 +239,7 @@ public class MainFrame extends JFrame {
     /**
      * Creates menu bar
      */
-    private void createMenuBar()
-    {
+    private void createMenuBar() {
         final JMenuBar menuBar = new JMenuBar();
         menuBar.setFont(this.themeManager.getTheme().getMenubarFont());
         final MenuFactory menuFactory = getMenuFactory();
@@ -273,8 +254,7 @@ public class MainFrame extends JFrame {
     /**
      * Start autosave feature
      */
-    private void startAutoSave()
-    {
+    private void startAutoSave() {
         new AutoSave(this);
     }
 
@@ -282,29 +262,26 @@ public class MainFrame extends JFrame {
     /**
      * Add a listener to perform action when something happens on this diagram
      */
-    private void listenToWorkspaceEvents(final IWorkspace workspace)
-    {
+    private void listenToWorkspaceEvents(final IWorkspace workspace) {
         workspace.addListener(new IWorkspaceListener() {
-            public void titleChanged(final String newTitle)
-            {
+            @Override
+            public void titleChanged(final String newTitle) {
                 setTitle(newTitle);
                 tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), newTitle);
             }
 
-            public void graphCouldBeSaved()
-            {
+            @Override
+            public void graphCouldBeSaved() {
                 // nothing to do here
             }
 
-            public void mustOpenfile(final IFile file)
-            {
+            @Override
+            public void mustOpenfile(final IFile file) {
                 try {
                     final IGraphFile graphFile = new GraphFile(file);
                     final IWorkspace newWorkspace = new Workspace(graphFile);
                     addWorkspace(newWorkspace);
-                }
-                catch (final IOException e)
-                {
+                } catch (final IOException e) {
                     final DialogFactory dialogFactory = DialogFactory.getInstance();
                     dialogFactory.showErrorDialog(e.getMessage());
                 }
@@ -317,10 +294,8 @@ public class MainFrame extends JFrame {
      *
      * @param workspace workspace to remove
      */
-    public void removeWorkspace(final IWorkspace workspace)
-    {
-        if (workspaceList.contains(workspace))
-        {
+    public void removeWorkspace(final IWorkspace workspace) {
+        if (workspaceList.contains(workspace)) {
             workspaceList.remove(workspace);
         }
     }
@@ -330,8 +305,7 @@ public class MainFrame extends JFrame {
      *
      * @param newWorkspace new workspace
      */
-    public void addWorkspace(final IWorkspace newWorkspace)
-    {
+    public void addWorkspace(final IWorkspace newWorkspace) {
         workspaceList.add(newWorkspace);
         setActiveWorkspace(newWorkspace);
         addCloseableTab(newWorkspace.getTitle(), newWorkspace);
@@ -342,11 +316,9 @@ public class MainFrame extends JFrame {
      *
      * @param graphFile diagram file path
      */
-    public void setActiveWorkspace(final IFile graphFile)
-    {
+    public void setActiveWorkspace(final IFile graphFile) {
         final IWorkspace workspace = findWorkspaceByFile(graphFile);
-        if (workspace != null)
-        {
+        if (workspace != null) {
             setActiveWorkspace(workspace);
             addCloseableTab(workspace.getTitle(), workspace);
         }
@@ -355,16 +327,12 @@ public class MainFrame extends JFrame {
     /**
      * Find workspace in workspace collection by file
      */
-    private IWorkspace findWorkspaceByFile(final IFile graphFile)
-    {
-        if (graphFile != null)
-        {
-            for (final IWorkspace workspace : this.workspaceList)
-            {
+    private IWorkspace findWorkspaceByFile(final IFile graphFile) {
+        if (graphFile != null) {
+            for (final IWorkspace workspace : this.workspaceList) {
                 final String inputFileName = graphFile.getFilename();
                 final String currentFileName = workspace.getGraphFile().getFilename();
-                if (inputFileName.equals(currentFileName))
-                {
+                if (inputFileName.equals(currentFileName)) {
                     return workspace;
                 }
             }
@@ -377,10 +345,8 @@ public class MainFrame extends JFrame {
      *
      * @param workspace workspace
      */
-    public void setActiveWorkspace(final IWorkspace workspace)
-    {
-        if (workspace != null && this.workspaceList.contains(workspace))
-        {
+    public void setActiveWorkspace(final IWorkspace workspace) {
+        if (workspace != null && this.workspaceList.contains(workspace)) {
             listenToWorkspaceEvents(workspace);
             menuFactory.getDocumentMenu(this).updateMenuItem();
             setTitle(workspace.getTitle());
@@ -393,26 +359,22 @@ public class MainFrame extends JFrame {
      *
      * @return workspace list
      */
-    public List<IWorkspace> getWorkspaceList()
-    {
+    public List<IWorkspace> getWorkspaceList() {
         return workspaceList;
     }
 
     /**
      * @return selected diagram file path (or null if not one is selected)
      */
-    public IWorkspace getActiveWorkspace()
-    {
+    public IWorkspace getActiveWorkspace() {
         return this.activeWorkspace;
     }
 
     /**
      * @return the menu factory instance
      */
-    private MenuFactory getMenuFactory()
-    {
-        if (this.menuFactory == null)
-        {
+    private MenuFactory getMenuFactory() {
+        if (this.menuFactory == null) {
             menuFactory = new MenuFactory();
         }
         return this.menuFactory;
@@ -421,12 +383,12 @@ public class MainFrame extends JFrame {
     /**
      * Initialize new tabbed pane
      */
-    private void createTabbedPane()
-    {
-        this.tabbedPane = new JTabbedPane();
-//        this.tabbedPane.add(new JPanel());
-        this.tabbedPane.addChangeListener(new TabSwitchActionHandler());
-        getContentPane().add(this.tabbedPane);
+    private void initTabbedPane() {
+        if (this.tabbedPane == null) {
+            this.tabbedPane = new JTabbedPane();
+            this.tabbedPane.addChangeListener(new TabSwitchActionHandler());
+            getContentPane().add(this.tabbedPane);
+        }
     }
 
     private JTabbedPane tabbedPane;
@@ -487,10 +449,8 @@ public class MainFrame extends JFrame {
                         IGraph.class,
                         AbstractNode.class,
                 };
-        for (final Class<?> cl : cls)
-        {
-            try
-            {
+        for (final Class<?> cl : cls) {
+            try {
                 beanInfos.put(cl, Introspector.getBeanInfo(cl));
             } catch (final IntrospectionException ignored) {
             }
