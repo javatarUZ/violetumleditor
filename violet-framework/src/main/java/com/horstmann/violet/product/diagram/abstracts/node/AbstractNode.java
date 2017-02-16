@@ -21,20 +21,20 @@
 
 package com.horstmann.violet.product.diagram.abstracts.node;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.horstmann.violet.framework.graphics.content.Content;
 import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
 import com.horstmann.violet.product.diagram.abstracts.Direction;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * A class that supplies convenience implementations for a number of methods in the Node interface

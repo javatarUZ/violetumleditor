@@ -21,12 +21,6 @@
 
 package com.horstmann.violet.workspace.sidebar;
 
-import java.awt.Component;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JPanel;
-
 import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.sidebar.colortools.ColorToolsBarPanel;
 import com.horstmann.violet.workspace.sidebar.colortools.IColorChoiceBar;
@@ -34,6 +28,10 @@ import com.horstmann.violet.workspace.sidebar.editortools.EditorToolsPanel;
 import com.horstmann.violet.workspace.sidebar.graphtools.GraphToolsBar;
 import com.horstmann.violet.workspace.sidebar.graphtools.IGraphToolsBar;
 import com.horstmann.violet.workspace.sidebar.optionaltools.OptionalToolsPanel;
+import java.awt.Component;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JPanel;
 
 public class SideBar extends JPanel implements ISideBar
 {

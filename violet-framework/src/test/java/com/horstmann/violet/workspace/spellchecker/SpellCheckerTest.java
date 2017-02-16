@@ -3,8 +3,6 @@ package com.horstmann.violet.workspace.spellchecker;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 
 public class SpellCheckerTest {
 

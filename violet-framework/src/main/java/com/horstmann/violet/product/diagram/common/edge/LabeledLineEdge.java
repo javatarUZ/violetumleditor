@@ -1,13 +1,13 @@
 package com.horstmann.violet.product.diagram.common.edge;
 
 import com.horstmann.violet.framework.graphics.content.TextContent;
+import com.horstmann.violet.product.diagram.abstracts.Direction;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.edge.bentstyle.BentStyle;
 import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
-import com.horstmann.violet.product.diagram.abstracts.Direction;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 

@@ -1,12 +1,5 @@
 package com.horstmann.violet.workspace.editorpart.behavior;
 
-import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import com.horstmann.violet.framework.dialog.DialogFactory;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.BeanInjector;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.InjectedBean;
@@ -136,12 +129,6 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
             {
                 tooltip = ((INode) edited).getToolTip() + ": ";
                 this.behaviorManager.fireBeforeEditingNode((INode) edited);
-                if (edited instanceof INamedNode)
-                {
-                    behaviorManager.fireWhileEditingNode((INode) edited, event);
-                    checkCorrectnessOfString((INamedNode) edited);
-
-                }
             }
             if (edited instanceof IEdge)
             {
@@ -197,6 +184,7 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                 if (edited instanceof INode)
                 {
                     behaviorManager.fireWhileEditingNode((INode) edited, event);
+                    checkCorrectnessOfString((INamedNode) edited);
                 }
                 if (edited instanceof IEdge)
                 {
@@ -241,8 +229,8 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
         final String regexSplitByUpperCase = "(?=\\p{Lu})";
 
         nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
-        nodeName = nodeName.replaceAll("<html><center>«interface»</center> <font size=\\+1>", "");
-        nodeName = nodeName.replaceAll("<html><center>«enumeration»</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>ï¿½interfaceï¿½</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>ï¿½enumerationï¿½</center> <font size=\\+1>", "");
 
         return nodeName.split(regexSplitByUpperCase);
     }

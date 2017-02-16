@@ -7,6 +7,7 @@ import com.horstmann.violet.framework.graphics.content.ContentInsideShape;
 import com.horstmann.violet.framework.graphics.content.TextContent;
 import com.horstmann.violet.framework.graphics.content.VerticalLayout;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
+import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
 import com.horstmann.violet.product.diagram.common.node.ColorableNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
@@ -19,17 +20,11 @@ import com.horstmann.violet.product.diagram.property.text.decorator.PrefixDecora
 import com.horstmann.violet.product.diagram.property.text.decorator.ReplaceSentenceDecorator;
 import java.awt.Color;
 
-public class EnumNode extends ColorableNode implements INodeName
-{
-
 /**
  * A class node in a class diagram.
  */
 public class EnumNode extends ColorableNode implements INamedNode
 {
-	/**
-     * Construct a class node with a default size
-     */
     private SingleLineText name;
     private MultiLineText attributes;
     private MultiLineText methods;
@@ -37,6 +32,9 @@ public class EnumNode extends ColorableNode implements INamedNode
     private static final int MIN_NAME_HEIGHT = 45;
     private static final int MIN_WIDTH = 100;
 
+    /**
+     * Construct a class node with a default size
+     */
     public EnumNode()
     {
         super();
@@ -167,13 +165,6 @@ public class EnumNode extends ColorableNode implements INamedNode
             methods.setText(newValue);
         }
     }
-    @Override
-    public LineText getMethods() {
-        return null;
-    }
-
-    private SingleLineText name;
-    private MultiLineText attributes;
 
     public LineText getMethods()
     {
@@ -183,6 +174,12 @@ public class EnumNode extends ColorableNode implements INamedNode
 
     private static final LineText.Converter NAME_CONVERTER = text -> new PrefixDecorator( new LargeSizeDecorator(new OneLineText(text)), "<center>«enumeration»</center>");
     private static final String[][] SIGNATURE_REPLACE_KEYS = {
+        { "public ", "+ " },
+        { "package ", "~ " },
+        { "protected ", "# " },
+        { "private ", "- " },
+        { "property ", "/ " }
+    };
 
     private static final LineText.Converter PROPERTY_CONVERTER = new LineText.Converter()
     {
