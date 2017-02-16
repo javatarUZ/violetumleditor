@@ -48,7 +48,8 @@ public class TabFinalizer {
      * @return User decision as int value
      * @see JOptionPane
      */
-    private int askUserForSaveFile() {
+    private int askUserForSaveFile()
+    {
         final JOptionPane optionPane = new JOptionPane(this.dialogExitMessage,
                 JOptionPane.CLOSED_OPTION, JOptionPane.YES_NO_CANCEL_OPTION, this.dialogExitIcon);
         dialogFactory.showDialog(optionPane, this.dialogExitTitle, true);

@@ -107,89 +107,6 @@ public class MainFrame extends JFrame
     }
 
     /**
-     * A class that represents tab component with title and close button.
-     */
-    private class CloseableTabComponent extends JPanel
-    {
-        private final JTabbedPane tabbedPane;
-
-        CloseableTabComponent(final JTabbedPane tabbedPane)
-        {
-            super(new FlowLayout());
-            this.tabbedPane = tabbedPane;
-            setOpaque(true);
-            add(createTabLabel());
-            add(new CloseButton());
-        }
-
-        /**
-         * Creates label with title from tabbed panel
-         */
-        private JLabel createTabLabel()
-        {
-            final JLabel label = new JLabel()
-            {
-                @Override
-                public String getText()
-                {
-                    final int newTabIndex = tabbedPane
-                            .indexOfTabComponent(CloseableTabComponent.this);
-                    if (newTabIndex != -1)
-                    {
-                        return tabbedPane.getTitleAt(newTabIndex);
-                    }
-                    return null;
-                }
-            };
-            return label;
-        }
-
-        /**
-         * A class that represents close button for tab
-         */
-        private class CloseButton extends JButton
-        {
-            CloseButton()
-            {
-                this.setIcon(new ImageIcon(tabCloseImage));
-                this.setBorder(BorderFactory.createEmptyBorder());
-                setFocusPainted(false);
-                setContentAreaFilled(false);
-                addActionListener(new ButtonClickHandler());
-            }
-
-            private class ButtonClickHandler implements ActionListener
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    final int clickedTabIndex = tabbedPane
-                            .indexOfTabComponent(CloseableTabComponent.this);
-                    closeTab(clickedTabIndex);
-                    tabbedPane.revalidate();
-                    tabbedPane.repaint();
-                }
-            }
-        }
-
-        /**
-         * Close tab with specified index
-         */
-        private void closeTab(final int index)
-        {
-            if (index != -1)
-            {
-                final IWorkspace workspace = getWorkspaceAt(index);
-                if (tabFinalizer.isReadyToClose(workspace))
-                {
-                    removeWorkspace(workspace);
-                    tabbedPane.removeTabAt(index);
-                }
-            }
-        }
-    }
-
-    /**
      * Close tab with specified workspace
      *
      * @param workspace workspace to close
@@ -198,22 +115,6 @@ public class MainFrame extends JFrame
     {
             removeWorkspace(workspace);
             tabbedPane.remove(workspace.getAWTComponent());
-    }
-
-    private class TabSwitchActionHandler implements ChangeListener
-    {
-        @Override
-        public void stateChanged(final ChangeEvent e)
-        {
-            final int index = tabbedPane.getSelectedIndex();
-            if (index != -1)
-            {
-                final IWorkspace workspace = getWorkspaceAt(index);
-                setActiveWorkspace(workspace);
-            }
-            tabbedPane.revalidate();
-            tabbedPane.repaint();
-        }
     }
 
     /**
@@ -290,7 +191,6 @@ public class MainFrame extends JFrame
     {
         new AutoSave(this);
     }
-
 
     /**
      * Add a listener to perform action when something happens on this diagram
@@ -447,6 +347,108 @@ public class MainFrame extends JFrame
             menuFactory = new MenuFactory();
         }
         return this.menuFactory;
+    }
+
+    /**
+     * Listener for tab switch actions
+     */
+    private class TabSwitchActionHandler implements ChangeListener
+    {
+        @Override
+        public void stateChanged(final ChangeEvent e)
+        {
+            final int index = tabbedPane.getSelectedIndex();
+            if (index != -1)
+            {
+                final IWorkspace workspace = getWorkspaceAt(index);
+                setActiveWorkspace(workspace);
+            }
+            tabbedPane.revalidate();
+            tabbedPane.repaint();
+        }
+    }
+
+    /**
+     * A class that represents tab component with title and close button.
+     */
+    private class CloseableTabComponent extends JPanel
+    {
+        private final JTabbedPane tabbedPane;
+
+        CloseableTabComponent(final JTabbedPane tabbedPane)
+        {
+            super(new FlowLayout());
+            this.tabbedPane = tabbedPane;
+            setOpaque(true);
+            add(createTabLabel());
+            add(new CloseButton());
+        }
+
+        /**
+         * Creates label with title from tabbed panel
+         */
+        private JLabel createTabLabel()
+        {
+            final JLabel label = new JLabel()
+            {
+                @Override
+                public String getText()
+                {
+                    final int newTabIndex = tabbedPane
+                            .indexOfTabComponent(CloseableTabComponent.this);
+                    if (newTabIndex != -1)
+                    {
+                        return tabbedPane.getTitleAt(newTabIndex);
+                    }
+                    return null;
+                }
+            };
+            return label;
+        }
+
+        /**
+         * A class that represents close button for tab
+         */
+        private class CloseButton extends JButton
+        {
+            CloseButton()
+            {
+                this.setIcon(new ImageIcon(tabCloseImage));
+                this.setBorder(BorderFactory.createEmptyBorder());
+                setFocusPainted(false);
+                setContentAreaFilled(false);
+                addActionListener(new ButtonClickHandler());
+            }
+
+            private class ButtonClickHandler implements ActionListener
+            {
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    final int clickedTabIndex = tabbedPane
+                            .indexOfTabComponent(CloseableTabComponent.this);
+                    closeTab(clickedTabIndex);
+                    tabbedPane.revalidate();
+                    tabbedPane.repaint();
+                }
+            }
+        }
+
+        /**
+         * Close tab with specified index
+         */
+        private void closeTab(final int index)
+        {
+            if (index != -1)
+            {
+                final IWorkspace workspace = getWorkspaceAt(index);
+                if (tabFinalizer.isReadyToClose(workspace))
+                {
+                    removeWorkspace(workspace);
+                    tabbedPane.removeTabAt(index);
+                }
+            }
+        }
     }
 
     private JTabbedPane tabbedPane;
