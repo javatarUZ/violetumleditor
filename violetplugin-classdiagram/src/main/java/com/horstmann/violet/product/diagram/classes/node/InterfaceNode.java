@@ -1,26 +1,25 @@
 package com.horstmann.violet.product.diagram.classes.node;
 
-import com.horstmann.violet.product.diagram.abstracts.node.INodeName;
-import java.awt.*;
-import java.awt.geom.Point2D;
-
 import com.horstmann.violet.framework.graphics.Separator;
 import com.horstmann.violet.framework.graphics.content.*;
-import com.horstmann.violet.framework.graphics.content.VerticalLayout;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
-import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
-import com.horstmann.violet.product.diagram.property.text.decorator.*;
-import com.horstmann.violet.product.diagram.common.node.ColorableNode;
-import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
+import com.horstmann.violet.product.diagram.common.node.ColorableNode;
+import com.horstmann.violet.product.diagram.common.node.PointNode;
+import com.horstmann.violet.product.diagram.property.text.LineText;
+import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
-import com.horstmann.violet.product.diagram.common.node.PointNode;
+import com.horstmann.violet.product.diagram.property.text.decorator.*;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 /**
  * An interface node in a class diagram.
  */
-public class InterfaceNode extends ColorableNode implements INodeName
+public class InterfaceNode extends ColorableNode implements INamedNode
 {
     /**
      * Construct an interface node with a default size and the text <<interface>>.
@@ -140,6 +139,11 @@ public class InterfaceNode extends ColorableNode implements INodeName
         return name;
     }
 
+    @Override
+    public LineText getAttributes() {
+        return null;
+    }
+
     /**
      * Sets the methods property value.
      * 
@@ -170,6 +174,7 @@ public class InterfaceNode extends ColorableNode implements INodeName
     private static final int MIN_NAME_HEIGHT = 45;
     private static final int MIN_WIDTH = 100;
     private static final String STATIC = "<<static>>";
+    private static final String HIDE= "hide ";
 
     private static LineText.Converter nameConverter = new LineText.Converter()
     {
@@ -185,6 +190,11 @@ public class InterfaceNode extends ColorableNode implements INodeName
         public OneLineText toLineString(String text)
         {
             OneLineText lineString = new OneLineText(text);
+
+            if(lineString.contains(HIDE))
+            {
+                lineString = new HideDecorator(lineString);
+            }
 
             if(lineString.contains(STATIC))
             {

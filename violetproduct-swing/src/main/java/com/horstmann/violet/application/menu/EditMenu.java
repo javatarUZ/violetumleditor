@@ -21,43 +21,33 @@
 
 package com.horstmann.violet.application.menu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
 import com.horstmann.violet.application.gui.MainFrame;
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
 import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
-import com.horstmann.violet.workspace.editorpart.behavior.CutCopyPasteBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.EditSelectedBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SelectAllBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.SelectByDistanceBehavior;
-import com.horstmann.violet.workspace.editorpart.behavior.UndoRedoCompoundBehavior;
+import com.horstmann.violet.workspace.editorpart.behavior.*;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Edit menu
- * 
+ *
  * @author Alexandre de Pellegrin
- * 
  */
 @ResourceBundleBean(resourceReference = MenuFactory.class)
-public class EditMenu extends JMenu
-{
+public class EditMenu extends JMenu {
 
     /**
      * Default constructor
-     * 
+     *
      * @param mainFrame where is attached this menu
-     * @param factory for accessing to external resources
      */
     @ResourceBundleBean(key = "edit")
-    public EditMenu(final MainFrame mainFrame)
-    {
+    public EditMenu(final MainFrame mainFrame) {
         ResourceBundleInjector.getInjector().inject(this);
         this.mainFrame = mainFrame;
         this.createMenu();
@@ -66,165 +56,169 @@ public class EditMenu extends JMenu
     /**
      * Initializes menu
      */
-    private void createMenu()
-    {
-        undo.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+    private void createMenu() {
+        undo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<UndoRedoCompoundBehavior> found = behaviorManager.getBehaviors(UndoRedoCompoundBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                      found.get(0).undo();
                     }
-                    found.get(0).undo();
                 }
             }
         });
         this.add(undo);
 
-        redo.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        redo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<UndoRedoCompoundBehavior> found = behaviorManager.getBehaviors(UndoRedoCompoundBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).redo();
                     }
-                    found.get(0).redo();
                 }
             }
         });
         this.add(redo);
 
-        properties.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        properties.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<EditSelectedBehavior> found = behaviorManager.getBehaviors(EditSelectedBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).createSelectedItemEditMenu();
                     }
-                    found.get(0).editSelected();
                 }
             }
         });
         this.add(properties);
 
-        cut.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        cut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<CutCopyPasteBehavior> found = behaviorManager.getBehaviors(CutCopyPasteBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).cut();
                     }
-                    found.get(0).cut();
                 }
             }
         });
         this.add(cut);
 
-        copy.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        copy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<CutCopyPasteBehavior> found = behaviorManager.getBehaviors(CutCopyPasteBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).copy();
                     }
-                    found.get(0).copy();
                 }
             }
         });
         this.add(copy);
 
-        paste.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        paste.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<CutCopyPasteBehavior> found = behaviorManager.getBehaviors(CutCopyPasteBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).paste();
                     }
-                    found.get(0).paste();
                 }
             }
         });
         this.add(paste);
 
-        delete.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
+        find.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
+                    IEditorPart activeEditorPart = getActiveEditorPart();
+                    IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
+                    List<FindBehavior> found = behaviorManager.getBehaviors(FindBehavior.class);
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).find();
+                    }
+                }
+            }
+        });
+        this.add(find);
+
+        delete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
                 if (isThereAnyWorkspaceDisplayed()) getActiveEditorPart().removeSelected();
             }
         });
         this.add(delete);
-        
-        selectAll.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+
+        selectAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<SelectAllBehavior> found = behaviorManager.getBehaviors(SelectAllBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).selectAllGraphElements();
                     }
-                    found.get(0).selectAllGraphElements();
                 }
             }
         });
         this.add(selectAll);
 
-        selectNext.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        selectNext.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<SelectByDistanceBehavior> found = behaviorManager.getBehaviors(SelectByDistanceBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).selectAnotherGraphElement(1);
                     }
-                    found.get(0).selectAnotherGraphElement(1);
                 }
             }
         });
         this.add(selectNext);
 
-        selectPrevious.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (isThereAnyWorkspaceDisplayed()) {
+        selectPrevious.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if (isThereAnyWorkspaceDisplayed())
+                {
                     IEditorPart activeEditorPart = getActiveEditorPart();
                     IEditorPartBehaviorManager behaviorManager = activeEditorPart.getBehaviorManager();
                     List<SelectByDistanceBehavior> found = behaviorManager.getBehaviors(SelectByDistanceBehavior.class);
-                    if (found.size() != 1) {
-                        return;
+                    if (found.size() >= 1)
+                    {
+                        found.get(0).selectAnotherGraphElement(-1);
                     }
-                    found.get(0).selectAnotherGraphElement(-1);
                 }
             }
         });
@@ -235,20 +229,20 @@ public class EditMenu extends JMenu
     /**
      * @return current editor
      */
-    private IEditorPart getActiveEditorPart()
-    {
+    private IEditorPart getActiveEditorPart() {
         return this.mainFrame.getActiveWorkspace().getEditorPart();
     }
 
     /**
      * @return true id at least one workspace is reachable
      */
-    private boolean isThereAnyWorkspaceDisplayed()
-    {
+    private boolean isThereAnyWorkspaceDisplayed() {
         return mainFrame.getWorkspaceList().size() > 0;
     }
-    
-    /** Application frame */
+
+    /**
+     * Application frame
+     */
     private MainFrame mainFrame;
 
     @ResourceBundleBean(key = "edit.undo")
@@ -268,6 +262,9 @@ public class EditMenu extends JMenu
 
     @ResourceBundleBean(key = "edit.paste")
     private JMenuItem paste;
+
+    @ResourceBundleBean(key = "edit.find")
+    private JMenuItem find;
 
     @ResourceBundleBean(key = "edit.delete")
     private JMenuItem delete;
