@@ -187,7 +187,7 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getLocalizedMessage());
         }
     }
 
