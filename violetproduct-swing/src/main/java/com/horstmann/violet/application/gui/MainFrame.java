@@ -181,6 +181,7 @@ public class MainFrame extends JFrame
         menuBar.add(menuFactory.getViewMenu(this));
         menuBar.add(menuFactory.getDocumentMenu(this));
         menuBar.add(menuFactory.getHelpMenu(this));
+        menuBar.add(menuFactory.getSettingMenu(this));
         setJMenuBar(menuBar);
     }
 
@@ -317,6 +318,14 @@ public class MainFrame extends JFrame
             this.tabbedPane.addChangeListener(new TabSwitchActionHandler());
             getContentPane().add(this.tabbedPane);
         }
+    }
+
+    /**
+     * @return true if at least a diagram is displayed
+     */
+    public boolean isThereAnyDiagramDisplayed()
+    {
+        return !this.workspaceList.isEmpty();
     }
 
     /**
