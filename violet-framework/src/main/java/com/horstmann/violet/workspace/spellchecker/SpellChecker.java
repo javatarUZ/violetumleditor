@@ -10,7 +10,6 @@ import org.languagetool.rules.RuleMatch;
 /**
  * This class check correctness of string
  *
- * @author Sebastian Podgorski
  */
 public class SpellChecker {
 
