@@ -28,10 +28,13 @@ import com.horstmann.violet.framework.graphics.content.TextContent;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideCustomShape;
 import com.horstmann.violet.framework.injection.resources.ResourceBundleConstant;
 import com.horstmann.violet.framework.theme.ThemeManager;
+import com.horstmann.violet.framework.util.MementoCaretaker;
+import com.horstmann.violet.framework.util.OneStringMemento;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
-import com.horstmann.violet.product.diagram.property.text.LineText;
+import com.horstmann.violet.framework.dialog.IRevertableProperties;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
+import com.horstmann.violet.product.diagram.property.text.LineText;
 import com.horstmann.violet.workspace.sidebar.colortools.ColorToolsBarPanel;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -40,7 +43,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-public class NoteNode extends ColorableNode
+public class NoteNode extends ColorableNode implements IRevertableProperties
 {
     /**
      * Construct a note node with default content structure.
@@ -147,7 +150,7 @@ public class NoteNode extends ColorableNode
     @Override
     public LineText getMethods() {
         return null;
-    }
+}
 
     @Override
     public int getZ()
@@ -213,6 +216,20 @@ public class NoteNode extends ColorableNode
                 return path;
             }
         });
+    }
+
+    private final MementoCaretaker<OneStringMemento> caretaker = new MementoCaretaker<OneStringMemento>();
+
+    @Override
+    public void beforeUpdate()
+    {
+        caretaker.save(new OneStringMemento(text.toString()));
+    }
+
+    @Override
+    public void revertUpdate()
+    {
+        text.setText(caretaker.load().getValue());
     }
 
     private MultiLineText text;

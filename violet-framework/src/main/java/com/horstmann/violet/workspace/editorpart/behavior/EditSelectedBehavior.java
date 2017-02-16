@@ -9,6 +9,8 @@ import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.framework.dialog.IRevertableProperties;
+import com.horstmann.violet.product.diagram.common.node.DiagramLinkNode;
 import com.horstmann.violet.product.diagram.propertyeditor.CustomPropertyEditor;
 import com.horstmann.violet.product.diagram.propertyeditor.ICustomPropertyEditor;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
@@ -26,9 +28,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import org.jetbrains.annotations.NotNull;
 
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+
 public class EditSelectedBehavior extends AbstractEditorPartBehavior
 {
-
     public EditSelectedBehavior(IEditorPart editorPart)
     {
         BeanInjector.getInjector().inject(this);
@@ -102,6 +112,10 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
             addPropertyListener(edited, sheet);
             JOptionPane optionPane = createOptionPane(edited, sheet);
             String tooltip = handleSheetEdit(edited, sheet, optionPane);
+            if(edited instanceof IRevertableProperties)
+            {
+               ((IRevertableProperties)edited).beforeUpdate();
+            }
             this.dialogFactory.showDialog(optionPane, tooltip + this.dialogTitle, false);
         }
     }
@@ -148,14 +162,15 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
 
     private JOptionPane createOptionPane(final Object edited, final ICustomPropertyEditor sheet)
     {
-        JOptionPane optionPane = new JOptionPane();
+        JOptionPane optionPane = new JOptionPane("",JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
+
         optionPane.setOpaque(true);
+
         optionPane.addPropertyChangeListener(new PropertyChangeListener()
         {
             public void propertyChange(PropertyChangeEvent event)
             {
-                if ((event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)) && event.getNewValue() != null
-                        && event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
+                if ((event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)) && isInitialized(event.getNewValue()))
                 {
                     if (sheet.isEditable())
                     {
@@ -168,8 +183,22 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                             behaviorManager.fireAfterEditingEdge((IEdge) edited);
                         }
                         editorPart.getSwingComponent().invalidate();
+
+
+                        if (edited instanceof IRevertableProperties)
+                        {
+                            if(event.getNewValue().equals(JOptionPane.CANCEL_OPTION))
+                            {
+                                ((IRevertableProperties)edited).revertUpdate();
+                            }
+                        }
+
                     }
                 }
+            }
+
+            private boolean isInitialized(Object eventValue) {
+                return eventValue != null && eventValue != JOptionPane.UNINITIALIZED_VALUE;
             }
         });
         return optionPane;

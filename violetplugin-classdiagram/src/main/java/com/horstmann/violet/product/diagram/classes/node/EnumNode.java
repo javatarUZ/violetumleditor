@@ -7,6 +7,9 @@ import com.horstmann.violet.framework.graphics.content.ContentInsideShape;
 import com.horstmann.violet.framework.graphics.content.TextContent;
 import com.horstmann.violet.framework.graphics.content.VerticalLayout;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
+import com.horstmann.violet.framework.dialog.IRevertableProperties;
+import com.horstmann.violet.framework.util.MementoCaretaker;
+import com.horstmann.violet.framework.util.ThreeStringMemento;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
 import com.horstmann.violet.product.diagram.common.node.ColorableNode;
@@ -23,7 +26,8 @@ import java.awt.Color;
 /**
  * A class node in a class diagram.
  */
-public class EnumNode extends ColorableNode implements INamedNode
+
+public class EnumNode extends ColorableNode implements INamedNode, IRevertableProperties
 {
     private SingleLineText name;
     private MultiLineText attributes;
@@ -159,12 +163,31 @@ public class EnumNode extends ColorableNode implements INamedNode
         return attributes;
     }
 
+
     public void setMethods(final LineText newValue)
     {
         if( newValue != null) {
             methods.setText(newValue);
         }
     }
+
+    private final MementoCaretaker<ThreeStringMemento> caretaker = new MementoCaretaker<ThreeStringMemento>();
+
+    @Override
+    public void beforeUpdate()
+    {
+        caretaker.save(new ThreeStringMemento(name.toString(), attributes.toString()));
+    }
+
+    @Override
+    public void revertUpdate()
+    {
+        ThreeStringMemento memento = caretaker.load();
+
+        name.setText(memento.getFirstValue());
+        attributes.setText(memento.getSecondValue());
+    }
+
 
     public LineText getMethods()
     {

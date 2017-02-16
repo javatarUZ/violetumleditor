@@ -95,6 +95,11 @@ public class BasicTheme extends AbstractTheme
         return this.basicWhite;
     }
 
+	public Color getGridBackgroundColor() 
+	{
+		return Color.WHITE;
+	}
+    
     public Color getGridColor()
     {
         return this.defaultGridColor;

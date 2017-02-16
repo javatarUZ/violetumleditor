@@ -77,6 +77,11 @@ public class ClassicMetalTheme extends AbstractTheme
     {
         return MetalLookAndFeel.getWhite();
     }
+    
+	public Color getGridBackgroundColor() 
+	{
+		return Color.WHITE;
+	}
 
     public Color getGridColor()
     {
