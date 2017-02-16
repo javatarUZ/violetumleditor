@@ -28,16 +28,10 @@ import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.workspace.editorpart.behavior.IEditorPartBehavior;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import com.horstmann.violet.workspace.editorpart.enums.Direction;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
@@ -354,5 +348,13 @@ public class EditorPart extends JPanel implements IEditorPart
         graph.removeNode(nodesArray);
         graph.removeEdge(edgesArray);
     }
+
+    @Override
+    public void align(Direction direction){
+        Align align = new Align();
+        align.alignElements(getSelectedNodes(),direction);
+        repaint();
+    }
+
 
 }
