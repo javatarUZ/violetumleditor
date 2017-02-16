@@ -71,8 +71,6 @@ import javax.swing.event.ChangeListener;
 
 /**
  * This desktop frame contains panes that show graphs.
- *
- * @author Alexandre de Pellegrin
  */
 @ResourceBundleBean(resourceReference = AboutDialog.class)
 public class MainFrame extends JFrame
@@ -194,7 +192,7 @@ public class MainFrame extends JFrame
     /**
      * Close tab with specified workspace
      *
-     * @param workspace
+     * @param workspace workspace to close
      */
     public void closeTabWithWorkspace(final IWorkspace workspace)
     {
@@ -335,7 +333,7 @@ public class MainFrame extends JFrame
      *
      * @param workspace workspace to remove
      */
-    public void removeWorkspace(final IWorkspace workspace)
+    private void removeWorkspace(final IWorkspace workspace)
     {
         if (workspaceList.contains(workspace))
         {
