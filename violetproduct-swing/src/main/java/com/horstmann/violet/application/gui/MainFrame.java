@@ -191,6 +191,17 @@ public class MainFrame extends JFrame
         }
     }
 
+    /**
+     * Close tab with specified workspace
+     *
+     * @param workspace
+     */
+    public void closeTabWithWorkspace(final IWorkspace workspace)
+    {
+            removeWorkspace(workspace);
+            tabbedPane.remove(workspace.getAWTComponent());
+    }
+
     private class TabSwitchActionHandler implements ChangeListener
     {
         @Override
@@ -329,6 +340,7 @@ public class MainFrame extends JFrame
         if (workspaceList.contains(workspace))
         {
             workspaceList.remove(workspace);
+            menuFactory.getDocumentMenu(this).updateMenuItem();
         }
     }
 
