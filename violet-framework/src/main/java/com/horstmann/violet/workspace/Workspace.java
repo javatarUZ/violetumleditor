@@ -46,6 +46,7 @@ import com.horstmann.violet.workspace.editorpart.behavior.DragTransitionPointBeh
 import com.horstmann.violet.workspace.editorpart.behavior.EditSelectedBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.FileCouldBeSavedBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.FindBehavior;
+import com.horstmann.violet.workspace.editorpart.behavior.RenameBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.ResizeNodeBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.SelectAllBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.SelectByClickBehavior;
