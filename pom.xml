@@ -23,7 +23,7 @@
     <module>violetproduct-swing</module>
     <module>violetproduct-deb</module>
 
-    <!-- Module 'web' is commented out because he's causing problems during project build-->
+    <!-- Module 'web' is commented out because it's causing problems during project build-->
     <module>violetproduct-exe</module>
     <!--<module>violetproduct-web</module>-->
     <!--<module>violetproduct-jnlp</module>-->
