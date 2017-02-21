@@ -1,25 +1,29 @@
 package com.horstmann.violet.product.diagram.classes.node;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-
 import com.horstmann.violet.framework.graphics.Separator;
 import com.horstmann.violet.framework.graphics.content.*;
-import com.horstmann.violet.framework.graphics.content.VerticalLayout;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
-import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
-import com.horstmann.violet.product.diagram.property.text.decorator.*;
-import com.horstmann.violet.product.diagram.common.node.ColorableNode;
-import com.horstmann.violet.product.diagram.property.text.LineText;
+import com.horstmann.violet.framework.dialog.IRevertableProperties;
+import com.horstmann.violet.framework.util.MementoCaretaker;
+import com.horstmann.violet.framework.util.ThreeStringMemento;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
+import com.horstmann.violet.product.diagram.classes.ClassDiagramConstant;
+import com.horstmann.violet.product.diagram.common.node.ColorableNode;
+import com.horstmann.violet.product.diagram.common.node.ColorableNodeWithMethodsInfo;
+import com.horstmann.violet.product.diagram.common.node.PointNode;
+import com.horstmann.violet.product.diagram.property.text.LineText;
+import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
 import com.horstmann.violet.product.diagram.property.text.MultiLineText;
 import com.horstmann.violet.product.diagram.property.text.SingleLineText;
-import com.horstmann.violet.product.diagram.common.node.PointNode;
+import com.horstmann.violet.product.diagram.property.text.decorator.*;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 /**
  * An interface node in a class diagram.
  */
-public class InterfaceNode extends ColorableNode
+public class InterfaceNode extends ColorableNodeWithMethodsInfo implements INamedNode, IRevertableProperties
 {
     /**
      * Construct an interface node with a default size and the text <<interface>>.
@@ -71,11 +75,13 @@ public class InterfaceNode extends ColorableNode
         TextContent nameContent = new TextContent(name);
         nameContent.setMinHeight(MIN_NAME_HEIGHT);
         nameContent.setMinWidth(MIN_WIDTH);
-        TextContent methodsContent = new TextContent(methods);
 
         VerticalLayout verticalGroupContent = new VerticalLayout();
         verticalGroupContent.add(nameContent);
-        verticalGroupContent.add(methodsContent);
+		if (VISIBLE_METHODS_AND_ATRIBUTES == true) {
+			TextContent methodsContent = new TextContent(methods);
+			verticalGroupContent.add(methodsContent);
+		}
         separator = new Separator.LineSeparator(getBorderColor());
         verticalGroupContent.setSeparator(separator);
 
@@ -86,6 +92,15 @@ public class InterfaceNode extends ColorableNode
         setContent(getBackground());
     }
 
+	/**
+	 * Edit visible boolean parameter to opposite value. And refers structure.
+	 */
+	@Override
+	public void switchVisible() {
+		VISIBLE_METHODS_AND_ATRIBUTES = !VISIBLE_METHODS_AND_ATRIBUTES;
+		createContentStructure();
+	}
+	
     @Override
     public void setBorderColor(Color borderColor)
     {
@@ -119,63 +134,37 @@ public class InterfaceNode extends ColorableNode
         return false;
     }
 
-    /**
-     * Sets the name property value.
-     * 
-     * @param newValue the interface name
-     */
-    public void setName(LineText newValue)
+    private final MementoCaretaker<ThreeStringMemento> caretaker = new MementoCaretaker<ThreeStringMemento>();
+
+    @Override
+    public void beforeUpdate()
     {
-        name.setText(newValue);
+        caretaker.save(new ThreeStringMemento(name.toString(), methods.toString()));
     }
 
-    /**
-     * Gets the name property value.
-     * 
-     * @return the interface name
-     */
-    public LineText getName()
+    @Override
+    public void revertUpdate()
     {
-        return name;
+        ThreeStringMemento memento = caretaker.load();
+
+        name.setText(memento.getFirstValue());
+        methods.setText(memento.getSecondValue());
     }
-
-    /**
-     * Sets the methods property value.
-     * 
-     * @param newValue the methods of this interface
-     */
-    public void setMethods(LineText newValue)
-    {
-        methods.setText(newValue);
-    }
-
-    /**
-     * Gets the methods property value.
-     * 
-     * @return the methods of this interface
-     */
-    public LineText getMethods()
-    {
-        return methods;
-    }
-
-
-
-    private SingleLineText name;
-    private MultiLineText methods;
 
     private transient Separator separator = null;
 
     private static final int MIN_NAME_HEIGHT = 45;
     private static final int MIN_WIDTH = 100;
-    private static final String STATIC = "<<static>>";
+    private boolean VISIBLE_METHODS_AND_ATRIBUTES = true;
+    private static final String STATIC = "\u00ABstatic\u00BB";
+    private static final String HIDE= "hide ";
 
     private static LineText.Converter nameConverter = new LineText.Converter()
     {
         @Override
         public OneLineText toLineString(String text)
         {
-            return new PrefixDecorator( new LargeSizeDecorator(new OneLineText(text)), "<center>«interface»</center>");
+            return new PrefixDecorator( new LargeSizeDecorator(new OneLineText(text)), "<center>\u00ABinterface\u00BB</center>");
         }
     };
     private static final LineText.Converter methodsConverter = new LineText.Converter()
@@ -184,6 +173,11 @@ public class InterfaceNode extends ColorableNode
         public OneLineText toLineString(String text)
         {
             OneLineText lineString = new OneLineText(text);
+
+            if(lineString.contains(HIDE))
+            {
+                lineString = new HideDecorator(lineString);
+            }
 
             if(lineString.contains(STATIC))
             {
