@@ -176,8 +176,8 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                     {
                         if (edited instanceof INode)
                         {
-                            checkCorrectnessOfString((INamedNode) edited);
                             behaviorManager.fireAfterEditingNode((INode) edited);
+                            checkCorrectnessOfString((INode) edited);
                         }
                         if (edited instanceof IEdge)
                         {
@@ -229,7 +229,7 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
         });
     }
 
-    private void checkCorrectnessOfString(final INamedNode edited) {
+    private void checkCorrectnessOfString(final INode edited) {
         try {
             String nodeName = edited.getName().getText();
             String[] splitNameByUpperCase = getClearNodeName(nodeName);
@@ -259,7 +259,7 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
         nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
         nodeName = nodeName.replaceAll("<html><center>\u00ABinterface\u00BB</center> <font size=\\+1>", "");
         nodeName = nodeName.replaceAll("<html><center>\u00ABenumeration\u00BB</center> <font size=\\+1>", "");
-
+        nodeName = nodeName.replaceAll("<html>", "");
         return nodeName.split(regexSplitByUpperCase);
     }
 
