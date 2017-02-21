@@ -256,10 +256,10 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
     private String[] getClearNodeName(String nodeName) {
 
         final String regexSplitByUpperCase = "(?=\\p{Lu})";
-
+        System.out.println(nodeName);
         nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
-        nodeName = nodeName.replaceAll("<html><center>�interface�</center> <font size=\\+1>", "");
-        nodeName = nodeName.replaceAll("<html><center>�enumeration�</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>«interface»</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>«enumeration»</center> <font size=\\+1>", "");
 
         return nodeName.split(regexSplitByUpperCase);
     }
