@@ -176,6 +176,7 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                     {
                         if (edited instanceof INode)
                         {
+                            checkCorrectnessOfString((INamedNode) edited);
                             behaviorManager.fireAfterEditingNode((INode) edited);
                         }
                         if (edited instanceof IEdge)
@@ -213,7 +214,6 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
                 if (edited instanceof INode)
                 {
                     behaviorManager.fireWhileEditingNode((INode) edited, event);
-                    checkCorrectnessOfString((INamedNode) edited);
                 }
                 if (edited instanceof IEdge)
                 {
