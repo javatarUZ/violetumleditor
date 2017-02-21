@@ -236,9 +236,9 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
             for(String word : splitNameByUpperCase) {
                 boolean correctWord = SpellChecker.isCorrectWord(word);
                 if (!correctWord){
-                    edited.setTextColor(Color.RED);
+                    edited.getName().setTextColor(Color.RED);
                 }else{
-                    edited.setTextColor(Color.BLACK);
+                    edited.getName().setTextColor(Color.BLACK);
                 }
             }
         } catch (IOException e) {
@@ -256,10 +256,9 @@ public class EditSelectedBehavior extends AbstractEditorPartBehavior
     private String[] getClearNodeName(String nodeName) {
 
         final String regexSplitByUpperCase = "(?=\\p{Lu})";
-        System.out.println(nodeName);
         nodeName = nodeName.replaceAll("<html><font size=\\+1>", "").replaceAll("</font><html>", "");
-        nodeName = nodeName.replaceAll("<html><center>«interface»</center> <font size=\\+1>", "");
-        nodeName = nodeName.replaceAll("<html><center>«enumeration»</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>\u00ABinterface\u00BB</center> <font size=\\+1>", "");
+        nodeName = nodeName.replaceAll("<html><center>\u00ABenumeration\u00BB</center> <font size=\\+1>", "");
 
         return nodeName.split(regexSplitByUpperCase);
     }
