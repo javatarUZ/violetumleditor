@@ -57,6 +57,7 @@ import com.horstmann.violet.workspace.editorpart.behavior.ShowMenuOnRightClickBe
 import com.horstmann.violet.workspace.editorpart.behavior.SwingRepaintingBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.UndoRedoCompoundBehavior;
 import com.horstmann.violet.workspace.editorpart.behavior.ZoomByWheelBehavior;
+import com.horstmann.violet.workspace.editorpart.behavior.MoveSelectedWithArrowKeysBehavior;
 import com.horstmann.violet.workspace.sidebar.ISideBar;
 import com.horstmann.violet.workspace.sidebar.SideBar;
 import com.horstmann.violet.workspace.sidebar.colortools.IColorChoiceBar;
