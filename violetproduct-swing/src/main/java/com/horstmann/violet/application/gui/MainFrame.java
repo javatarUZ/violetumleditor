@@ -310,10 +310,12 @@ public class MainFrame extends JFrame implements IAutoSave
         if (workspace != null && this.workspaceList.contains(workspace))
         {
             listenToWorkspaceEvents(workspace);
+            attachWorkspaceKeyListener(workspace);
             menuFactory.getDocumentMenu(this).updateMenuItem();
             setTitle(workspace.getTitle());
             this.activeWorkspace = workspace;
             tabbedPane.setSelectedComponent(workspace.getAWTComponent());
+
         }
     }
 
