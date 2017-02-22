@@ -1,8 +1,9 @@
 package com.horstmann.violet.framework.file;
 
-import java.io.OutputStream;
-
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 
 public interface IGraphFile extends IFile
 {
@@ -87,6 +88,12 @@ public interface IGraphFile extends IFile
      */
     public String getDirectory();
     
-    public abstract void autoSave();
+    public abstract void autoSave(String autoSaveDirectory);
+    public abstract void autoSaveSettingsWasChanged();
     public abstract void removeBackup();
+
+    /**
+     * Saves file and uploads it to Google Drive
+     */
+    void saveToGoogleDrive() throws GeneralSecurityException, IOException;
 }

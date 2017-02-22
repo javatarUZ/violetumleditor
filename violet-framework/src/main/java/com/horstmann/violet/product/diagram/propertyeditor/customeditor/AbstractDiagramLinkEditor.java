@@ -21,15 +21,6 @@
 
 package com.horstmann.violet.product.diagram.propertyeditor.customeditor;
 
-import java.awt.FontMetrics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyEditorSupport;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-
 import com.horstmann.violet.framework.file.GraphFile;
 import com.horstmann.violet.framework.file.IFile;
 import com.horstmann.violet.framework.file.IGraphFile;
@@ -42,6 +33,13 @@ import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector
 import com.horstmann.violet.product.diagram.common.DiagramLink;
 import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.Workspace;
+import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyEditorSupport;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 
 /**
  * A PropertyEditor for FileLink objects that lets the user select a file and/or open it.
@@ -80,7 +78,7 @@ public abstract class AbstractDiagramLinkEditor extends PropertyEditorSupport
         {
             return "null";
         }
-        return "new File(\"" + fl.getURL().getFile() + "\")";
+        return "new File(\"" + fl.getFile() + "\")";
     }
 
     /**
