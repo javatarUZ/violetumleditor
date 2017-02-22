@@ -21,13 +21,6 @@
 
 package com.horstmann.violet.framework.file.naming;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.InjectedBean;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.ManagedBean;
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
@@ -35,6 +28,12 @@ import com.horstmann.violet.framework.injection.resources.annotation.ResourceBun
 import com.horstmann.violet.framework.plugin.IDiagramPlugin;
 import com.horstmann.violet.framework.plugin.PluginRegistry;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This file provides common file services
@@ -137,9 +136,10 @@ public class FileNamingService
      */
     public ExtensionFilter[] getImageExtensionFilters()
     {
-        ExtensionFilter[] filters = new ExtensionFilter[2];
+        ExtensionFilter[] filters = new ExtensionFilter[3];
         filters[0] = new ExtensionFilter(this.imageFileType1FilterName, this.imageFileType1Extension);
         filters[1] = new ExtensionFilter(this.imageFileType2FilterName, this.imageFileType2Extension);
+        filters[2] = new ExtensionFilter(this.imageFileType3FilterName, this.imageFileType3Extension);
         return filters;
     }
 
@@ -170,6 +170,12 @@ public class FileNamingService
     
     @ResourceBundleBean(key="files.image.type2.extension")
     private String imageFileType2Extension;
+
+    @ResourceBundleBean(key="files.image.type3.name")
+    private String imageFileType3FilterName;
+
+    @ResourceBundleBean(key="files.image.type3.extension")
+    private String imageFileType3Extension;
 
     @ResourceBundleBean(key="files.global.name")
     private String defaultFileFilterName;

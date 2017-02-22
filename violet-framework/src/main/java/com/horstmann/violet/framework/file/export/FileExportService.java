@@ -24,13 +24,15 @@ package com.horstmann.violet.framework.file.export;
 import com.horstmann.violet.framework.util.ClipboardPipe;
 import com.horstmann.violet.framework.util.PDFGraphics2DStringWriter;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
-import org.freehep.graphicsbase.util.UserProperties;
-import org.freehep.graphicsio.pdf.PDFGraphics2D;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
+import org.freehep.graphicsbase.util.UserProperties;
+import org.freehep.graphicsio.pdf.PDFGraphics2D;
 
 public class FileExportService
 {
@@ -46,7 +48,7 @@ public class FileExportService
     {
         Rectangle2D bounds = graph.getClipBounds();
 
-        BufferedImage image = new BufferedImage((int) bounds.getWidth() + 1, (int) bounds.getHeight() + 1,
+        BufferedImage image = new BufferedImage((int) bounds.getWidth() + 50, (int) bounds.getHeight() + 50,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = (Graphics2D) image.getGraphics();
 
@@ -101,7 +103,7 @@ public class FileExportService
 
         g2.translate(-bounds.getX(), -bounds.getY());
         g2.setColor(Color.WHITE);
-        g2.fill(new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth() + 1, bounds.getHeight() + 1));
+        g2.fill(new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth() + 50, bounds.getHeight() + 50));
 
         g2.setColor(Color.BLACK);
         g2.setBackground(Color.WHITE);

@@ -21,6 +21,9 @@
 
 package com.horstmann.violet.workspace.editorpart;
 
+import com.horstmann.violet.framework.theme.ThemeManager;
+import com.horstmann.violet.product.diagram.abstracts.IGraph;
+import com.horstmann.violet.product.diagram.abstracts.IGridSticker;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
@@ -29,10 +32,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
-import com.horstmann.violet.framework.theme.ThemeManager;
-import com.horstmann.violet.product.diagram.abstracts.IGraph;
-import com.horstmann.violet.product.diagram.abstracts.IGridSticker;
 
 /**
  * A grid to which points and rectangles can be "snapped". The snapping operation moves a point to the nearest grid point.
@@ -115,7 +114,7 @@ public class PlainGrid implements IGrid
         if (snappingWidth == 0 || snappingHeight == 0) return;
         Color oldColor = g2.getColor();
         Rectangle2D.Double bounds = getBounds(g2);
-        g2.setColor(Color.WHITE);
+        g2.setColor(ThemeManager.getInstance().getTheme().getGridBackgroundColor());
         g2.fill(bounds);
         g2.setColor(ThemeManager.getInstance().getTheme().getGridColor());
         Stroke oldStroke = g2.getStroke();

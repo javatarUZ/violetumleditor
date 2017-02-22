@@ -1,20 +1,5 @@
 package com.horstmann.violet.framework.file;
 
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import com.horstmann.violet.framework.dialog.DialogFactory;
 import com.horstmann.violet.framework.file.chooser.IFileChooserService;
 import com.horstmann.violet.framework.file.export.FileExportService;
@@ -24,12 +9,26 @@ import com.horstmann.violet.framework.file.persistence.IFilePersistenceService;
 import com.horstmann.violet.framework.file.persistence.IFileReader;
 import com.horstmann.violet.framework.file.persistence.IFileWriter;
 import com.horstmann.violet.framework.file.persistence.JFileWriter;
+import com.horstmann.violet.framework.google.drive.GoogleDriveAgent;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.BeanInjector;
 import com.horstmann.violet.framework.injection.bean.ManiocFramework.InjectedBean;
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
 import com.horstmann.violet.framework.printer.PrintEngine;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.GeneralSecurityException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 public class GraphFile implements IGraphFile
 {
@@ -45,10 +44,6 @@ public class GraphFile implements IGraphFile
         try
         {
 			this.graph = graphClass.newInstance();
-			this.autoSaveFilename = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()) + ".html";
-
-			this.autoSaveFile = new File(this.autoSaveDirectory + this.autoSaveFilename);
-			this.autoSaveFile.createNewFile();
         }
         catch (Exception e)
         {
@@ -75,10 +70,7 @@ public class GraphFile implements IGraphFile
         if (in != null)
         {
 			this.graph = this.filePersistenceService.read(in);
-			this.autoSaveFilename = file.getFilename();
-
-			this.autoSaveFile = new File(this.autoSaveDirectory + this.autoSaveFilename);
-			this.autoSaveFile.createNewFile();
+	
         }
         else
         {
@@ -86,6 +78,7 @@ public class GraphFile implements IGraphFile
                     fileOpener.getFileDefinition().getDirectory());
         }
     }
+
 
     @Override
     public IGraph getGraph()
@@ -157,10 +150,20 @@ public class GraphFile implements IGraphFile
     }
     
 	@Override
-	public void autoSave() {
+	public void autoSave(String fileDirectory) {
 		try {
+
+			if (this.autoSaveFileName == null) {
+					this.autoSaveFileName =  new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()) + ".html";
+				}
+			
+				if ((autoSaveFile == null) || ((autoSaveFile != null) && (!autoSaveFile.getAbsolutePath().contains(fileDirectory) == false))) {
+				 	this.autoSaveFile = new File(fileDirectory + File.separator + this.autoSaveFileName);
+				 	autoSaveFile.createNewFile();
+				}
+			
 			if (autoSaveFile.exists()) {
-				JFileWriter jfilewriter = new JFileWriter(autoSaveFile);
+			    JFileWriter jfilewriter = new JFileWriter(autoSaveFile);
 				this.filePersistenceService.write(this.graph, jfilewriter.getOutputStream());
 			}
 		} catch (Exception e) {
@@ -170,9 +173,19 @@ public class GraphFile implements IGraphFile
 	
 	@Override
 	public void removeBackup() {
-		if (autoSaveFile.exists())
+		if ((autoSaveFile != null) && (autoSaveFile.exists())) {
 			autoSaveFile.delete();
+		}
 	}
+
+    @Override
+    public void saveToGoogleDrive() throws GeneralSecurityException, IOException
+    {
+        save();
+
+        final GoogleDriveAgent googleDriveAgent = new GoogleDriveAgent();
+        googleDriveAgent.saveFile(String.format("%s/%s", currentDirectory, currentFilename));
+    }
 
     @Override
     public void saveToNewLocation()
@@ -334,6 +347,13 @@ public class GraphFile implements IGraphFile
         PrintEngine engine = new PrintEngine(this.graph);
         engine.start();
     }
+    
+    @Override
+	public void autoSaveSettingsWasChanged()
+    {
+		this.autoSaveFile = null;
+	}
+    
 
     private IGraph graph;
 
@@ -341,13 +361,11 @@ public class GraphFile implements IGraphFile
      * Needed to identify the physical file used to save the graph
      */
     private String currentFilename;
-    private String autoSaveFilename;
 
     /**
      * Needed to identify the physical file used to save the graph
      */
     private String currentDirectory;
-    private final String autoSaveDirectory = System.getProperty("user.home") + File.separator + "VioletUML" + File.separator;
 
     private boolean isSaveRequired = false;
 
@@ -387,4 +405,6 @@ public class GraphFile implements IGraphFile
     private List<IGraphFileListener> listeners = new ArrayList<IGraphFileListener>();
 
     private File autoSaveFile;
+    private String autoSaveFileName;
+
 }
