@@ -1,5 +1,10 @@
 package com.horstmann.violet.product.diagram.classes.node;
 
+import com.horstmann.violet.product.diagram.abstracts.node.INamedNode;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+
 import com.horstmann.violet.framework.graphics.Separator;
 import com.horstmann.violet.framework.graphics.content.*;
 import com.horstmann.violet.framework.graphics.shape.ContentInsideRectangle;
@@ -98,12 +103,12 @@ public class ClassNode extends ColorableNodeWithMethodsInfo implements INamedNod
         TextContent commentContent = new TextContent(comment);
         VerticalLayout verticalGroupContent = new VerticalLayout();
         verticalGroupContent.add(nameContent);
-        verticalGroupContent.add(commentContent);
 		if (VISIBLE_METHODS_AND_ATRIBUTES == true) {
 			TextContent attributesContent = new TextContent(attributes);
 			TextContent methodsContent = new TextContent(methods);
 			verticalGroupContent.add(attributesContent);
 			verticalGroupContent.add(methodsContent);
+            verticalGroupContent.add(commentContent);
 		}
         separator = new Separator.LineSeparator(getBorderColor());
         verticalGroupContent.setSeparator(separator);
